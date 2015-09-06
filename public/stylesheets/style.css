@@ -1,82 +1,380 @@
-/* style.css
- * This file provides css styles.
- */
-
-body,html {
-	background-color: #3b4b54; width : 100%;
-	height: 100%;
-	margin: 0 auto;
-	font-family: "HelveticaNeue-Light", "Helvetica Neue Light", "Helvetica Neue", Helvetica, Arial, "Lucida Grande", sans-serif;
-	color: #ffffff;
+body {
+  /*text-align: center;*/
+  /*min-width: 991px;*/
 }
 
-a {
-	text-decoration: none;
-	color: #00aed1;
+.background {
+  fill: none;
+  pointer-events: all;
 }
 
-a:hover {
-	text-decoration: underline;
+.feature {
+  fill: #ccc;
+  cursor: pointer;
 }
 
-.newappIcon {
-	padding-top: 10%;
-	display: block;
-	margin: 0 auto;
-	padding-bottom: 2em;
-	max-width:200px;
+.feature.active {
+  fill: orange;
 }
 
-h1 {
-	font-weight: bold;
-	font-size: 2em;
+.mesh {
+  fill: none;
+  stroke: #fff;
+  stroke-linecap: round;
+  stroke-linejoin: round;
 }
 
-.leftHalf {
-	float: left;
-	background-color: #26343f;
-	width: 45%;
-	height: 100%;
+.map {
+    position: relative;
 }
 
-.rightHalf {
-	float: right;
-	width: 55%;
-	background-color: #313f4a;
-	height: 100%;
-	overflow:auto;
+.leaflet-container {
+    background: none repeat scroll 0% 0% #FAF9FA;
+    outline: 0px none;
 }
 
-.blue {
-	color: #00aed1;
+.leaflet-right {
+    right: 0px;
+}
+
+.leaflet-top {
+    top: 0px;
+}
+
+.leaflet-top, .leaflet-bottom {
+    position: absolute;
+    z-index: 1000;
+    pointer-events: none;
+}
+
+.leaflet-right .leaflet-control {
+    margin-right: 10px;
+}
+.leaflet-top .leaflet-control {
+    margin-top: 40px;
+}
+.leaflet-right .leaflet-control {
+    float: right;
+}
+.leaflet-bottom .leaflet-control {
+    margin-bottom: 10px;
+}
+.leaflet-popup-pane, .leaflet-control {
+    cursor: auto;
+}
+.leaflet-control {
+    float: left;
+    clear: both;
+}
+.leaflet-control {
+    position: relative;
+    z-index: 7;
+    pointer-events: auto;
+}
+
+.info {
+    padding: 6px 8px;
+    font: 14px/16px Arial,Helvetica,sans-serif;
+    background: none repeat scroll 0% 0% rgba(255, 255, 255, 0.8);
+    box-shadow: 0px 0px 15px rgba(0, 0, 0, 0.2);
+    border-radius: 5px;
+}
+
+.info h4 {
+    margin: 0px 0px 5px;
+    color: #777;
+}
+
+.leaflet-bottom {
+    bottom: 0px;
+}
+.leaflet-right {
+    right: 0px;
+}
+.leaflet-top, .leaflet-bottom {
+    position: absolute;
+    z-index: 1000;
+    pointer-events: none;
+}
+.legend {
+    text-align: left;
+    line-height: 18px;
+    color: #555;
+    /*width: 125px;*/
+}
+.legend i {
+    /*margin-right: 68px;*/
+    opacity: 0.7;
+    height: 18px;
+    float: left;
+    width: 18px;
+}
+
+span.range {
+  margin-left: 3px;
+}
+
+/*Chart*/
+.axis path,
+.axis line {
+  fill: none;
+  stroke: #000;
+  shape-rendering: crispEdges;
+}
+
+.x.axis path {
+  /*display: none;*/
+}
+
+.line {
+  fill: none;
+  stroke: steelblue;
+  stroke-width: 1.5px;
+}
+
+.tooltipsy
+{
+  display:block;
+  position:absolute;
+  width:150px;
+
+  color:#fff;
+  border:2px solid rgba(34,34,34,0.9);
+  background:rgba(51,51,51,0.9);
+  text-align:center;
+  border-radius:3px;
+  /* Tooltip Style */
+
+    /*position: absolute;
+  width:140px;
+  color: #FFFFFF;
+  background: #000000;
+  height: 30px;
+  line-height: 30px;
+  text-align: center;
+  visibility: hidden;
+  border-radius: 6px;*/
+}
+
+.chart svg {
+  margin-left: 60px;
+}
+.success {
+  color: green;
+}
+tweetscountpersentiment
+.warning {
+  color: red;
+}
+.bar {
+  fill: #2196F3;
+}
+.bar:hover {
+  fill: #4682B4;
+}
+.axis {
+  font: 10px sans-serif;
+}
+.axis path,
+.axis line {
+  fill: none;
+  stroke: #000;
+  shape-rendering: crispEdges;
+}
+.x.axis path {
+  display: none;
+}
+
+#movieform {
+  width:100%;
+  height:auto;
+  position:relative;
+  margin:0 auto;
+  margin: 0 12%;
+}
+#leftform {
+  float: left;
+  background: #337AB7 none repeat scroll 0% 0%;
+  padding: 0px 28px 15px;
+  margin-right: 5px;
+}
+#rightform {
+  float:left;
+  padding:0 28px 15px;
+  position:relative;
+  background:#7C7C7C;
+  width: 45%;
+}
+#or {
+  position:absolute;
+  left: -23px;
+  top: 10px;
+  background:#fff;
+  width:40px;
+  height:40px;
+  text-align:center;
+  border-radius:50%;
+  font-weight:bold;
+  line-height:43px;
+  font-size: 15px;
+  color: #707070;
+}
+#movieform h1 {
+  text-align:left;
+  font-size:23px;
+  color: #fff;
+}
+#btn-visualize, #btn-insert-replace {
+  margin-left: 2px;
+  float: right;
+}
+#btn-delete, #btn-load {
+  float: right;
+}
+.select-action, .search-action {
+  padding-top: 5px;
+}
+
+#select-movie-list, #search-field {
+  margin-top: 30px;
+}
+
+/*DASHBOARD*/
+.mb20 {
+    margin-bottom: 20px;
+}
+.panel-lined, .panel-default, .panel-primary, .panel-success, .panel-info, .panel-warning, .panel-danger {
+    box-shadow: 0px 1px 2px 0px rgba(0, 0, 0, 0.1);
+    transition: box-shadow 0.2s ease-in 0s;
+}
+.row {
+  padding: 0px 15px;
+}
+.mini-box, .icon {
+  border-radius: 0px !important;
+}
+.left {
+  float: left;
+}
+.right {
+  float: right;
+}
+.mt0 {
+  margin-top: 0px;
+}
+.text-primary {
+  color: #3F51B5;
+}
+.text-bold {
+  font-weight: bold;
+}
+.mb0 {
+  margin-bottom: 0px;
+}
+.text-light {
+  font-weight: 300;
+}
+.panel-footer-primary {
+  background: #CC3333 none repeat scroll 0% 0% !important;
+}
+.panel-footer-primary, .panel-footer-success, .panel-footer-warning, .panel-footer-danger, .panel-footer-info, .panel-footer-pink {
+  color: #FFF;
+}
+.panel-footer-sm {
+  font-size: 12px;
+}
+.panel-footer p {
+  color: #fff;
+}
+.panel-footer-success {
+  background: #4CAF50 none repeat scroll 0% 0% !important;
+}
+.panel-footer-info {
+  background: #2196F3 none repeat scroll 0% 0% !important;
+}
+.panel-footer-pink {
+  background: #FFCC00 none repeat scroll 0% 0% !important;
+}
+.panel-heading {
+  border-radius: 0px;
+  font-size: 12px;
+  text-transform: uppercase;
+  font-weight: 600;
+}
+.panel-default .panel-heading {
+  margin: 0px 22px;
+  padding: 14px 0px;
+  background-color: #fff !important;
+}
+.icon-day:before {
+   content:url(..//images/mfl_icon_calendar_38.png);
+}
+.icon-state:before {
+   content:url(..//images/mfl_icon_house_38.png);
+}
+.icon-city:before {
+   content:url(..//images/mfl_icon_house_38.png);
+}
+.icon-sentiment:before {
+   content:url(..//images/troll_icons_2_28891_7697_thumb.png);
 }
 
 
-table {
-	table-layout: fixed;
-	width: 800px;
-	margin: 0 auto;
-	word-wrap: break-word;
-	padding-top:10%;
+/*.donut {
+  height: 360px;
+  position: relative;
+  width: 360px;
+}*/
+.donut-tooltip {
+  background: #eee;
+  box-shadow: 0 0 5px #999999;
+  color: #333 !important;
+  display: none;
+  font-size: 12px !important;
+  left: 130px;
+  padding: 10px;
+  position: absolute;
+  text-align: center !important;
+  top: 95px;
+  width: 80px;
+  z-index: 10;
 }
 
-th {
-	border-bottom: 1px solid #000;
+.donut-tooltip .label {
+  color: #333 !important;
 }
 
-th, td {
-	text-align: left;
-	padding: 2px 20px;
+/*stacked-area-chart*/
+.axis path,
+.axis line {
+  fill: none;
+  stroke: #121401;
+  stroke-width: 2px;
+  shape-rendering: crispEdges;
+}
+.point {
+  stroke: grey;
+  stroke-width: 3px;
+  opacity: 0;
+}
+.point:hover{
+  opacity: .5;
 }
 
-.env-var {
-	text-align: right;
-	border-right: 1px solid #000;
-	width: 30%;
+.message-box {
+  font-size: 12px;
+  line-height: 14px;
+  padding: 10px;
+  border-radius: 3px;
+  margin: 2px;
 }
 
-pre {
-	padding: 0;
-	margin: 0;
+.message-err {
+  background: #FAF6E8 none repeat scroll 0% 0%;
+  color: red;
 }
 
+.message-success {
+  background: #E2FFAC;
+  color: #397D02;
+}

@@ -1,0 +1,51 @@
+{
+	"api" : {
+		"description" : "API defines the version to use either REST(v1) or dashDB(v2) as a service",
+		"version" : "v3",
+		"v1" : {
+			"description" : "The api version v1 uses REST services deployed on server defined below.",
+			"restAPI" : {
+				"username" : "bluadmin",
+				"password" : "ZGRiNTllMTJmYzFh",
+				"hostname" : "https://9.39.221.94:8443",
+				"login" : {
+					"uri" : "/services/loginService",
+					"data": {
+						"j_username" : "bluadmin",
+						"j_password" : "ZGRiNTllMTJmYzFh"
+					}
+				},
+				"service" : {
+					"uri" : "/jobmanager/ResultSetDataProvider.form",
+					"RSBufferingType" : "FLAT_ROWS",
+					"cmd" : "getAllRows",
+					"dbProfileName" : "BLUDB"
+				},
+				"params" : {
+					"insecure" : true,
+					"cookie" : "/tmp/cks.dat"
+				}
+			}	
+		},
+		"v2" : {
+			"description" : "The api version v2 use dashDB as a service via vcap environmental variables. In case, if there is no service attached with the application, it used following connection variables",
+			"dashDB" : {
+				"db" : "BLUDB",
+				"hostname" : "awh-yp-small03.services.dal.bluemix.net",
+				"port" : 50000,
+				"username" : "dash101472",
+				"password" : "28HRXL0fiv1c"
+			}
+		},
+		"v3" : {
+			"description" : "The api version v2 use dashDB as a service via vcap environmental variables. In case, if there is no service attached with the application, it used following connection variables",
+			"dashDB" : {
+				"db" : "BLUDB",
+				"hostname" : "bluemix05.bluforcloud.com",
+				"port" : 50000,
+				"username" : "dash014018",
+				"password" : "uZzOA09Ki7cq"
+			}
+		}
+	}
+}

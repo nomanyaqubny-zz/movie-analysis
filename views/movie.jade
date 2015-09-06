@@ -1,0 +1,198 @@
+extends head
+
+append head
+	link(rel='stylesheet', href='/stylesheets/daterangepicker-bs3.css')
+
+block scripts
+	script(src='http://ajax.googleapis.com/ajax/libs/jquery/2.0.3/jquery.min.js')
+	script(src="http://d3js.org/d3.v3.min.js")
+	script(src='/javascripts/d3.min.js')
+	script(src='/javascripts/topojson.min.js')
+	script(type="text/javascript" src="/javascripts/bootstrap.min.js")
+	script(type="text/javascript" src="/javascripts/tooltipsy.min.js")
+	script(src='/javascripts/moment.min.js')
+	script(src='/javascripts/daterangepicker.js')
+	script(src='/javascripts/chart.js')
+	script(src='/javascripts/bounding-box.js')
+
+block content
+	header.header
+		.headline
+			.container
+				- heading = title + " Box Office Prediction"
+				h1= heading
+				hr.featurette-divider
+				p.lead This report analyzes the actual box office success of the movie "#{title}" (available online from 
+					a(href="http://www.the-numbers.com/daily-box-office-chart") www.the-numbers.com/daily-box-office-chart
+					| ) and how it correlates with the volume of tweets in Twitter. By breaking down the tweets geographically it is possible to understand the relative local tweet volume trend per US state and identify those states that require special marketing attention to support box office success of the movie.
+				br
+				.top-items
+					.row
+						.col-md-3.col-sm-6
+							.panel.panel-default.mb20.mini-box.panel-hovered
+								.panel-body
+									.clearfix
+										.top-day.left
+											h4.mto.text-primary.text-bold
+											h5.text-light.mb0
+										.right.icon-day
+								.panel-footer.clearfix.panel-footer-sm.panel-footer-primary
+									p.mt0.mb0.left Top Day
+						.col-md-3.col-sm-6
+							.panel.panel-default.mb20.mini-box.panel-hovered
+								.panel-body
+									.clearfix
+										.top-state.left
+											h4.mto.text-primary.text-bold
+											h5.text-light.mb0
+										.right.icon-state
+								.panel-footer.clearfix.panel-footer-sm.panel-footer-success
+									p.mt0.mb0.left Top State
+						.col-md-3.col-sm-6
+							.panel.panel-default.mb20.mini-box.panel-hovered
+								.panel-body
+									.clearfix
+										.top-city.left
+											h4.mto.text-primary.text-bold
+											h5.text-light.mb0
+										.right.icon-city
+								.panel-footer.clearfix.panel-footer-sm.panel-footer-info
+									p.mt0.mb0.left Top City
+						.col-md-3.col-sm-6
+							.panel.panel-default.mb20.mini-box.panel-hovered
+								.panel-body
+									.clearfix
+										.top-sentiment.left
+											h4.mto.text-primary.text-bold
+											h5.text-light.mb0
+										.right.icon-sentiment
+								.panel-footer.clearfix.panel-footer-sm.panel-footer-pink
+									p.mt0.mb0.left Top Sentiment
+				.bars-and-charts
+					.row
+						.col-md-4.col-sm-6
+							.panel.panel-default.mb20.panel-hovered
+								.panel-heading TOP LANGUAGES
+								.panel-body.text-center.top-languages.donut
+						.col-md-4.col-sm-6
+							.panel.panel-default.mb20.panel-hovered
+								.panel-heading TOP SENTIMENTS
+								.panel-body.text-center.top-sentiments.donut
+						.col-md-4.col-sm-6
+							.panel.panel-default.mb20.panel-hovered
+								.panel-heading GENDER TWEETS COUNT
+								.panel-body.text-center.gender-tweets-count
+					.row
+						.col-xs-12
+							.panel.panel-default.mb20.panel-hovered
+								.panel-heading Tweets Count Per Day
+								.panel-body.text-center.day-tweets-count
+					.row
+						.col-xs-12
+							.panel.panel-default.mb20.panel-hovered
+								.panel-heading Tweets Count Per Month
+								.panel-body.text-center.monthly-tweets-count
+					.row
+						.col-xs-12
+							.panel.panel-default.mb20.panel-hovered
+								.panel-heading Tweets Cour Per Sentiment Over Time
+								.panel-body.text-center.sentiments-tweets-count-over-time
+					.row
+						.col-xs-12
+							.panel.panel-default.mb20.panel-hovered
+								.panel-heading Tweets Count Per Sentiment and Language
+								.panel-body.text-center.sentiments-tweets-count-per-lanugage
+
+	.container
+		hr.featurette-divider
+		.featurette
+			h2.featurette-heading Tweet volume for "#{title}" per state since movie start on 2015-01-15
+			p.lead In this map we can see the absolute 
+				b public interest in "#{title}" expressed through tweets 
+				| broken down by US state. Please note that the numbers are an extrapolation based on a 10% sample of all tweets.
+			.map.map1.leaflet-container
+				input.datepicker(type="text", name="date-range-map1", data-time-picker="true", value= '01-01-2015 till Today')
+				.leaflet-control-container
+					.leaflet-top.leaflet-right
+						.info.leaflet-control
+							h4 Tweets Per State
+							Span Hover over a state to see
+					.leaflet-bottom.leaflet-right
+						.info.legend.leaflet-control
+							i(style="background:#FFEDA0")
+							Span.range 0-2000
+							br
+							i(style="background:#FED976")
+							Span.range 2000-5000
+							br
+							i(style="background:#FEB24C")
+							Span.range 5000-10000
+							br
+							i(style="background:#FD8D3C")
+							Span.range 10000-20000
+							br
+							i(style="background:#FC4E2A")
+							Span.range 20000-30000
+							br
+							i(style="background:#E31A1C")
+							Span.range 30000-40000
+							br
+							i(style="background:#BD0026")
+							Span.range 40000-50000
+							br
+							i(style="background:#800026")
+							Span.range 50000+
+
+		hr.featurette-divider
+		.featurette
+			h2.featurette-heading Dependency between actual box office success and tweet volume
+			p.lead This diagram highlights how the actual box office success of the movie correlates with the general tweet volume trend over time. Even though there are the spikes for box office numbers on weekends, the general trend correlates with the decline of tweet volume after movie launch.
+			input.datepicker(type="text", name="date-range-chart", data-time-picker="true", value= '01-01-2015 till Today')
+			.chart
+		
+		hr.featurette-divider
+		.featurette
+			h2.featurette-heading Relative decline of tweet volume per state since movie start on 2015-01-15
+			p.lead This map highlights the states that have the most significant decline of tweet volume since movie start. The number per state represents the 
+				b percentage of tweets today compared to the number of tweets on the day the movie started 
+				| in the state.
+			p.lead 
+				b Conclusion: 
+				| The states in red expose only a small percentage of tweet volume for the movie compared to the day when it started. Because we know that tweet volume can predict the actual box office success we 
+				b advice to increase local marketing activity for the movie in these states.
+			.map.map2.leaflet-container
+				.leaflet-control-container
+					.leaflet-top.leaflet-right
+						.info.leaflet-control
+							h4 Tweet percentage left
+							Span Hover over a state to see
+					.leaflet-bottom.leaflet-right
+						.info.legend.leaflet-control
+							i(style="background:#F5361A")
+							Span.range <1.0%
+							br
+							i(style="background:#f7614b")
+							Span.range 1.0-2.0%
+							br
+							i(style="background:#f8aa38")
+							Span.range 2.0-4.0%
+							br
+							i(style="background:#f9db57")
+							Span.range 4.0-5.0%
+							br
+							i(style="background:#c9df8a")
+							Span.range 5.0-8.0%
+							br
+							i(style="background:#77ab59")
+							Span.range 8.0-10.0%
+							br
+							i(style="background:#36802d")
+							Span.range 10.0-15.0%
+							br
+							i(style="background:#234d20")
+							Span.range 15.0+%
+		hr.featurette-divider
+		footer
+			.row
+				.col-lg-12
+					p Copyright &copy; IBM 2015
