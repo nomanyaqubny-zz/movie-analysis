@@ -27,10 +27,8 @@ app.use(express.static(path.join(__dirname, 'public')));
 var Database = require('./models/database');
 var db = new Database();
 db.initialize(function(err, result) {
-    if(!err) {
-        app.set("databaseConnection", true);
-    } else {
-        app.set("databaseConnection", false);
+    if(err) {
+        app.set("databaseConnectionError", result.message);
     }
 });
 

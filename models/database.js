@@ -164,12 +164,14 @@ Database.prototype = {
 		console.log("checkTableExist");
 		var query = "SELECT TABNAME FROM SYSCAT.TABLES WHERE TABSCHEMA=CURRENT_SCHEMA ORDER BY TABNAME";
 		var found = false;
-		this.executeQuery(query, function(result) {
-			for (var i = 0; i < result.data.length; i++) {
-				if(name.toUpperCase() === result.data[i].TABNAME) {
-					found = true;
+		this.executeQuery(query, function(err, result) {
+			if(!err) {
+				for (var i = 0; i < result.data.length; i++) {
+					if(name.toUpperCase() === result.data[i].TABNAME) {
+						found = true;
+					}
+	    			console.log(result.data[i].TABNAME);
 				}
-    			console.log(result.data[i].TABNAME);
 			}
 			callback(found);
 		});
@@ -186,16 +188,17 @@ Database.prototype = {
 						query += defaultTables[i].statement;
 					}
 				}
-				console.log(query)
 				if(query) {
-					self.executeQuery(query, function(result) {
-						if(!result.err) {
+					self.executeQuery(query, function(err, result) {
+						if(!err) {
 							console.log(result.message + " IN DATABASE INITIALIZATION")
 						} else {
 							console.log(result.message + " IN DATABASE INITIALIZATION")
 						}
 						callback(err, result);
 					});
+				} else {
+					callback(err, result);
 				}
 			}
 		});
