@@ -57,10 +57,10 @@ Test.prototype = {
 	envVariables: function(callback) {
 		if (process.env.VCAP_SERVICES) {
     		var env = JSON.parse(process.env.VCAP_SERVICES);
-    		dashDB = env['dashDB'][0].credentials;
+    		var dashDB = env['dashDB'][0].credentials;
     		callback(null, {all: env, dashDB: dashDB});
 		} else {
-			callback(true, {message:'No service attached'1});
+			callback(true, {message:'No service attached'});
 		}
 
 	}
