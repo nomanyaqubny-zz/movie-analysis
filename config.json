@@ -1,7 +1,7 @@
 {
 	"api" : {
 		"description" : "API defines the version to use either REST(v1) or dashDB(v2) as a service",
-		"version" : "v3",
+		"version" : "v2",
 		"v1" : {
 			"description" : "The api version v1 uses REST services deployed on server defined below.",
 			"restAPI" : {
@@ -28,24 +28,26 @@
 			}	
 		},
 		"v2" : {
-			"description" : "The api version v2 use dashDB as a service via vcap environmental variables. In case, if there is no service attached with the application, it used following connection variables",
+			"description" : "The api version v3 use dashDB as a service via vcap environmental variables. In case, if there is no service attached with the application, it used following connection variables",
 			"dashDB" : {
 				"db" : "BLUDB",
-				"hostname" : "awh-yp-small03.services.dal.bluemix.net",
+				"hostname" : "yp-dashdb-small-01-lon02.services.eu-gb.bluemix.net",
 				"port" : 50000,
-				"username" : "dash101472",
-				"password" : "28HRXL0fiv1c"
-			}
-		},
-		"v3" : {
-			"description" : "The api version v2 use dashDB as a service via vcap environmental variables. In case, if there is no service attached with the application, it used following connection variables",
-			"dashDB" : {
-				"db" : "BLUDB",
-				"hostname" : "bluemix05.bluforcloud.com",
-				"port" : 50000,
-				"username" : "dash014018",
-				"password" : "uZzOA09Ki7cq"
+				"username" : "dash104658",
+				"password" : "PxtZmj4pI1kC"
+			},
+			"twitterInsights" : {
+				"username": "8d53de89-d27e-4e6c-a67f-92033c8c3bab",
+		        "password": "tMPpwd5T81",
+		        "host": "cdeservice.mybluemix.net",
+		        "port": 443,
+		        "url": "https://8d53de89-d27e-4e6c-a67f-92033c8c3bab:tMPpwd5T81@cdeservice.mybluemix.net"
 			}
 		}
+	},
+	"scrapper" : {
+		"use" : "false",
+		"host" : "http://www.the-numbers.com",
+		"uri" : "/daily-box-office-chart"
 	}
 }

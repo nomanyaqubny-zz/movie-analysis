@@ -2,7 +2,9 @@
 
 var async = require('async'),
     request = require('request'),
-    Database = require('./database');
+    Database = require('./database'),
+    config = require('nconf'),
+    version = 'api:' + config.get("api:version");
 
 var query, 
     count, 
@@ -20,9 +22,7 @@ function TwitterInsight(searchString) {
     getColumns();
 
     var services = JSON.parse(process.env.VCAP_SERVICES || "{}");
-    insightHOST = services["twitterinsights"]
-    ? services["twitterinsights"][0].credentials.url
-    : "https://cdeservice.mybluemix.net:443";
+    insightHOST = services["twitterinsights"] ? services["twitterinsights"][0].credentials.url : config.get(version + ':twitterInsights').url;
 }
 
 TwitterInsight.prototype = {
@@ -73,9 +73,11 @@ TwitterInsight.prototype = {
                                     }
                                     next(err, data);
                                 });
-                            } //else {
+                            } else {
+                                console.log(err)
+                                console.log(data)
                                 // callback(err, progress)
-                            //}
+                            }
                         }, (n*MAX_TWEETS));
                     }, function(err, data) {
                         return callback(err, progress);
@@ -112,10 +114,10 @@ function retrieveInsight(url, query, callback, from) {
         method: "GET",
         url: url,
         qs: params,
-        auth: {
-            'user': 'f6204541d9434de8a1363a9214fe5455',
-            'pass': 'oUzn5yaGuq'
-        },
+        // auth: {
+        //     'user': 'f6204541d9434de8a1363a9214fe5455',
+        //     'pass': 'oUzn5yaGuq'
+        // },
         headers: {
             'Content-Type': 'application/json;charset=utf-8'
         }

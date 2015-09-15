@@ -1,6 +1,8 @@
 "use strict";
 
-var request = require('request');
+var request = require('request'),
+    config = require('nconf'),
+    version = 'api:' + config.get("api:version");
 
 function Test() {}
 
@@ -53,16 +55,15 @@ Test.prototype = {
 	        //     }
 	        // }
 	    });
-	},
-	envVariables: function(callback) {
-		if (process.env.VCAP_SERVICES) {
-    		var env = JSON.parse(process.env.VCAP_SERVICES);
-    		var dashDB = env['dashDB'][0].credentials;
-    		callback(null, {all: env, dashDB: dashDB});
-		} else {
-			callback(true, {message:'No service attached'});
-		}
+	}, 
+	envVariables : function(callback) {
+    	var services = JSON.parse(process.env.VCAP_SERVICES || "{}");
+    	var twitterInsight = services["twitterinsights"] ? services["twitterinsights"][0].credentials : "{}";
+    	var dashDB = services["dashDB"] ? services["dashDB"][0].credentials : "{}";
 
+    	var defaults = config.get(version);
+
+    	callback(null, {VCAP_SERVICES: {all:services, twitterInsight:twitterInsight, dashDB:dashDB}, defaults : defaults})
 	}
 }
 

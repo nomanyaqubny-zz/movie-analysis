@@ -2,12 +2,13 @@
 
 var request = require('request'),
 	cheerio = require('cheerio'),
-    Movie = require('../models/movie');
+    Movie = require('../models/movie'),
+    config = require('nconf');
 
 var searchString, movieName, $, performance;
 
-var numbersHost = 'http://www.the-numbers.com',
-    url = numbersHost + '/daily-box-office-chart';
+var numbersHost = config.get('scrapper').host,
+    url = numbersHost + config.get('scrapper').uri;
 
 function Scrapper(string) {
     searchString = string;
