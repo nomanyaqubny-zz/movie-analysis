@@ -55,12 +55,14 @@ function getInputParams(string) {
 
 function loadMovieData(string) {
   $.getJSON('/movie/load/search', getInputParams(string), function(result) {
+    console.log(result)
     if(!result.err && result.data) {
       $('.message').append('<div class="message-box message-success">Title: ' + result.data.theNumbers.name +  ', Box Office Entries : ' + result.data.theNumbers.performance.length
-       + ', Tweets Count: ' + result.data.twitterInsights + '</div>');
+       + ', Tweets Count: ' + result.data.twitterInsights.count + '</div>');
     } else {
-      $('.message').append('<div class="message-box message-err">'+result.data.theNumbers.message+'</div>');
+      $('.message').append('<div class="message-box message-err">'+result.data.message+'</div>');
     }
+    $('.message-box').fadeOut(100000, 'linear');
   });
   return false;
 }
@@ -72,6 +74,7 @@ function insertReplaceMovieDataCallback(result) {
       ' Box Office Entries : ' + result.data.theNumbers + '</div>');
   } else {
     $('.message').append('<div class="message-box message-err">'+result.data.message+'</div>');
+    $('.message-box').fadeOut(100000, 'linear');
   }
 }
 
@@ -137,4 +140,5 @@ function deleteMovieDataCallback(result) {
   } else {
     $('.message').append('<div class="message-box message-err">Error in Deletion</div>');
   }
+  $('.message-box').fadeOut(100000, 'linear');
 }

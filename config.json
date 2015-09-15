@@ -33,7 +33,7 @@
 				"db" : "BLUDB",
 				"hostname" : "yp-dashdb-small-01-lon02.services.eu-gb.bluemix.net",
 				"port" : 50000,
-				"username" : "dash104658",
+				"username" : "dash1046581",
 				"password" : "PxtZmj4pI1kC"
 			},
 			"twitterInsights" : {
@@ -41,7 +41,7 @@
 		        "password": "tMPpwd5T81",
 		        "host": "cdeservice.mybluemix.net",
 		        "port": 443,
-		        "url": "https://8d53de89-d27e-4e6c-a67f-92033c8c3bab:tMPpwd5T81@cdeservice.mybluemix.net"
+		        "url": "https://8d53de89-d27e-4e6c-a67f-92033c8c3bab:tMPpwd5T812@cdeservice.mybluemix.net"
 			}
 		}
 	},
