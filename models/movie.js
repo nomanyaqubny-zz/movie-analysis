@@ -70,19 +70,19 @@ Movie.prototype = {
 				});
 		    },
 		    twitterInsights: function(callback) {
-		    	console.log(searchStringTwitter)
+		    	console.log('Getting Tweets Count for: ' + searchStringTwitter);
 		    	var twitterInsight = new TwitterInsight(searchStringTwitter);
 				twitterInsight.count(function(err, data) {
 					// twitterInsight.print();
 					if(!err) {
-						tweetsCount = data;
+						tweetsCount = data.count;
 					}
 					callback(err, data);
 				});
 		    }
 		}, function(err, results) {
-		    // results is now equals to: {one: 'abc\n', two: 'xyz\n'}
-		    // console.log(results);
+			if(err && !results.theNumbers.performance) results.message = results.theNumbers.message;
+			else if(err && !results.twitterInsights.data) results.message = results.twitterInsights.message.description;
 		    callback(err, results);
 		});
 	},
@@ -181,7 +181,13 @@ function deleteMovieContent(movieName, callback) {
 }
 
 function deleteAll(movieID, tableName, callback) {
-	async.parallel({
+	async.series({
+		deleteMovieTweets: function(callback) {
+			var queryMT = "DROP TABLE "+ tableName
+			db.executeQuery(queryMT, function(err, result) {
+				callback(false, result);
+			});
+	    },
 		deleteMovieBoxOfficeContent: function(callback) {
 			var queryBO = "DELETE FROM BOX_OFFICE WHERE MOVIE_ID="+movieID;
 			db.executeQuery(queryBO, function(err, result) {
@@ -192,12 +198,6 @@ function deleteAll(movieID, tableName, callback) {
 	    	var queryMD = "DELETE FROM MOVIE WHERE ID="+movieID;
 			db.executeQuery(queryMD, function(err, result) {
 				callback(err, result);
-			});
-	    },
-	    deleteMovieTweets: function(callback) {
-			var queryMT = "DROP TABLE "+ tableName
-			db.executeQuery(queryMT, function(err, result) {
-				callback(false, result);
 			});
 	    },
 	}, function(err, results) {

@@ -28,11 +28,12 @@ function TwitterInsight(searchString) {
 TwitterInsight.prototype = {
 	count: function(callback) {
         var url = insightHOST + '/api/v1/messages/count';
-        retrieveInsight(url, query, function(err, data){
-            if(err)
-                throw err;
-            count = data['search']['results'];
-            callback(err, count);
+        retrieveInsight(url, query, function(err, data) {
+            if(!err) {
+                count = data['search']['results'];
+                data.count = count;
+            }
+            callback(err, data);
         });
     },
     fetch: function(callback) {
@@ -46,53 +47,25 @@ TwitterInsight.prototype = {
                 //TODO: insert into database here
                 next(err, data);
             });
-        }, function(err, data){
+        }, function(err, data) {
             callback(err, count);
         });
 	},
     insert: function(movieName, tableName, callback) {
         //check if there is already an ajax running
         if(progress == 0) {
-            var url = insightHOST + '/api/v1/messages/search?q=' + query + '&size=' + MAX_TWEETS;
             //create a table with the movie name to store tweets
-            var db = new Database();
+            var db = new Database(),
+                url = insightHOST + '/api/v1/messages/search';
             createMovieTweetsTable(db, tableName, function(err, data) {
                 if(!err) {
                     //retrieve the tweets and insert into table
                     //Twitter for Insight provides at max 500 tweets per request
                     //call the retrieve and insert function total number of tweets / max tweets per request
                     var times =  Math.ceil(count / MAX_TWEETS);
-                    // for (var i = 0; i < 200; i++) {
-                    //     var url = insightHOST + '/api/v1/messages/search?q=' + movieName + '&from=' + (i*MAX_TWEETS) + '&size=' + MAX_TWEETS;
-                    //     retrieveInsight(url, function(err, data) {
-                    //         //insert into database here
-                    //         if (!err && data['tweets'].length>0) {
-                    //             insertTweets(db, movieName, data['tweets'], function(err, message, rows) {
-                    //                 if(!err) {
-                    //                     progress += rows;
-                    //                     process.stdout.write("\rso far: " + progress);
-                    //                     if(progress>=100000) {
-                    //                         console.log("done")
-                    //                         callback(err, progress);
-                    //                     }
-                    //                 } else {
-                    //                     console.log(err)
-                    //                     // callback(err, progress)
-                    //                 }
-                    //             });
-                    //         } else {
-                    //             console.log(err)
-                    //             console.log(data['tweets'])
-                    //             callback(err, progress)
-                    //         }
-                    //     });
-                    // }
-
-                    
                     async.times(times, function(n, next) {
                         retrieveInsight(url, query, function(err, data) {
                             if (!err && data['tweets'].length > 0) {
-                                // url = data['related']['next']['href'];
                                 insertTweets(db, tableName, data['tweets'], function(err, message, rows) {
                                     if(!err) {
                                         progress += rows;
@@ -100,16 +73,13 @@ TwitterInsight.prototype = {
                                     }
                                     next(err, data);
                                 });
-                            } else {
-                                console.log(err)
-                                callback(err, progress)
-                            }
-                        }, n*MAX_TWEETS);
+                            } //else {
+                                // callback(err, progress)
+                            //}
+                        }, (n*MAX_TWEETS));
                     }, function(err, data) {
-                        console.log(err)
                         return callback(err, progress);
                     });
-
                 } else {
                     callback(err, progress);
                 }
@@ -130,6 +100,7 @@ TwitterInsight.prototype = {
 
 function retrieveInsight(url, query, callback, from) {
     var params = null;
+    //send query parameters as below in order to handle special characters in values such as '#'
     if(query) {
         params = {
             q: query,
@@ -144,6 +115,9 @@ function retrieveInsight(url, query, callback, from) {
         auth: {
             'user': 'f6204541d9434de8a1363a9214fe5455',
             'pass': 'oUzn5yaGuq'
+        },
+        headers: {
+            'Content-Type': 'application/json;charset=utf-8'
         }
     }, function(err, response, data) {
         if (err) {
@@ -153,16 +127,16 @@ function retrieveInsight(url, query, callback, from) {
                 try {
                     callback(null, JSON.parse(data));
                 } catch(e) {
-                    callback({ 
-                        error: { 
+                    callback(true, { 
+                        message: { 
                             description: e.message
                         },
                         status_code: response.statusCode
                     });
                 }
             } else {
-                callback({ 
-                    error: {
+                callback(true, {
+                    message: {
                         description: data 
                     },
                     status_code: response.statusCode
@@ -202,21 +176,21 @@ function createMovieTweetsTable (db, tableName, callback) {
         + 'PRIMARY KEY(ID)'
         + ') ORGANIZE BY ROW';
 
-    db.checkTableExist(tableName, function(found) {
+    // db.checkTableExist(tableName, function(found) {
         // db.executeQuery(dropFirst, function(result) {
         // console.log(result);
-        if(!found) {
+        // if(!found) {
             db.executeQuery(createTableQuery, function(err, result) {
                 if(err) console.log("Error in creating tweet table for the movie");
                 callback(err, {message:"New table "+ tableName +" created"});
             });
-        } else {
+        // } else {
             //TODO: dro table if exist logic ot beimpl
-            console.log("Table exists already");
-            callback(false, {message:"Table exists already."});
-        }
+            // console.log("Table exists already");
+            // callback(false, {message:"Table exists already."});
+        // }
     // });
-    });
+    // });
 }
 
 function insertTweets(db, tableName, tweets, callback) {
@@ -227,9 +201,8 @@ function insertTweets(db, tableName, tweets, callback) {
             insertQuery += "("+ getColumnsValues(tweets[i]) + "),";
         }
         insertQuery = insertQuery.slice(0,-1);
-
         database.executeQuery(insertQuery, function(err, result) {
-            if(!err) {
+            if( !err ) {
                 console.log("db insert: success")
                 callback(err, result.message + " IN TWEETS INSERTION.", i);
             } else {
@@ -242,6 +215,9 @@ function insertTweets(db, tableName, tweets, callback) {
             database = null;
         });
     } catch(e) {
+        console.log('catch')
+        console.log(insertQuery)
+        console.log(result)
         console.log(e)
         callback(true, e)
     }

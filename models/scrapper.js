@@ -7,8 +7,7 @@ var request = require('request'),
 var searchString, movieName, $, performance;
 
 var numbersHost = 'http://www.the-numbers.com',
-    // url = numbersHost + '/daily-box-office-chart';
-    url = numbersHost + '/box-office-chart/daily/2015/08/04';
+    url = numbersHost + '/daily-box-office-chart';
 
 function Scrapper(string) {
     searchString = string;
