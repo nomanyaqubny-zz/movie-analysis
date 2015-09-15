@@ -55,7 +55,7 @@ router.get('/load/:search', function(req, res, next) {
 });
 
 router.param('query', function(req, res, next, query) {
-	req.setTimeout(360000000);
+	//req.setTimeout(360000000);
 	var sessionRetrieve = (typeof req.session.retrieve === "undefined") ? null : req.session.retrieve;
 	if(req.url.indexOf("insert")>-1) {
 		movie.insert(sessionRetrieve, query, function(err, data) {
