@@ -64,20 +64,20 @@ TwitterInsight.prototype = {
                     //call the retrieve and insert function total number of tweets / max tweets per request
                     var times =  Math.ceil(count / MAX_TWEETS);
                     async.timesLimit(times, 2, function(n, next) {
-                        retrieveInsight(url, query, function(err, data) {
-                            if (!err && data['tweets'].length > 0) {
-                                insertTweets(db, tableName, data['tweets'], function(err, message, rows) {
-                                    if(!err) {
+                        //retrieveInsight(url, query, function(err, data) {
+                            //if (!err && data['tweets'].length > 0) {
+                                //insertTweets(db, tableName, data['tweets'], function(err, message, rows) {
+                                    //if(!err) {
                                         progress += rows;
                                         process.stdout.write("\rso far: " + progress);
-                                    }
-                                    next(err, data);
-                                });
-                            } else {
-                                console.log(err)
+                                    //}
+                                    next(false, null);
+                                //});
+                            //} else {
+                              //  console.log(err);
                                 // callback(err, progress)
-                            }
-                        }, (n*MAX_TWEETS));
+                           // }
+                        //}, (n*MAX_TWEETS));
                     }, function(err, data) {
                         return callback(err, progress);
                     });
