@@ -6,42 +6,74 @@ var gBoxOffice;
 // DOM Ready =============================================================
 initialize();
 
+$('input[name="date-range-tweets-per-day"]').datepicker({
+  changeMonth: true,
+  changeYear: true,
+  showButtonPanel: true,
+  dateFormat: 'MM yy'
+}).focus(function() {
+  var thisCalendar = $(this);
+  $('.ui-datepicker-calendar').detach();
+  $('.ui-datepicker-close').click(function() {
+    var month = parseInt($("#ui-datepicker-div .ui-datepicker-month :selected").val())+1;
+    var year = $("#ui-datepicker-div .ui-datepicker-year :selected").val();
+    thisCalendar.datepicker('setDate', new Date(year, month-1, 1));
+    getData('tweetsperday', drawDailyTweets, month, year);
+  });
+});
+
+$('input[name="date-range-tweets-over-time"]').datepicker({
+  changeMonth: true,
+  changeYear: true,
+  showButtonPanel: true,
+  dateFormat: 'MM yy'
+}).focus(function() {
+  var thisCalendar = $(this);
+  $('.ui-datepicker-calendar').detach();
+  $('.ui-datepicker-close').click(function() {
+    var month = parseInt($("#ui-datepicker-div .ui-datepicker-month :selected").val())+1;
+    var year = $("#ui-datepicker-div .ui-datepicker-year :selected").val();
+    thisCalendar.datepicker('setDate', new Date(year, month-1, 1));
+    getData('sentimentsandcountovertime', drawSentimentCountOverTime, month, year);
+  });
+});
+
 $('input[name="date-range-map1"]').daterangepicker({
-        format: 'MM-DD-YYYY',
-        startDate: '01/01/2014',
-        endDate: moment(),
-        minDate: '01/01/2014',
-        maxDate: moment(),
-        showDropdowns: true,
-        showWeekNumbers: true,
-        timePicker: false,
-        ranges: {
-           'Today': [moment(), moment()],
-           'Yesterday': [moment().subtract(1, 'days'), moment().subtract(1, 'days')],
-           'Last 7 Days': [moment().subtract(6, 'days'), moment()],
-           'Last 30 Days': [moment().subtract(29, 'days'), moment()],
-           'This Month': [moment().startOf('month'), moment().endOf('month')],
-           'Last Month': [moment().subtract(1, 'month').startOf('month'), moment().subtract(1, 'month').endOf('month')]
-        },
-        opens: 'left',
-        drops: 'down',
-        buttonClasses: ['btn', 'btn-sm'],
-        applyClass: 'btn-primary',
-        cancelClass: 'btn-default',
-        separator: ' to ',
-        locale: {
-            applyLabel: 'Submit',
-            cancelLabel: 'Cancel',
-            fromLabel: 'From',
-            toLabel: 'To',
-            customRangeLabel: 'Custom',
-            daysOfWeek: ['Su', 'Mo', 'Tu', 'We', 'Th', 'Fr','Sa'],
-            monthNames: ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'],
-            firstDay: 1
-        }
-      }, function(start, end, label) {
-        fetchTweetsJson(start.format('YYYY-MM-DD'), end.format('YYYY-MM-DD'));
-    });
+  format: 'MM-DD-YYYY',
+  startDate: '01/01/2014',
+  endDate: moment(),
+  minDate: '01/01/2014',
+  maxDate: moment(),
+  showDropdowns: true,
+  showWeekNumbers: false,
+  timePicker: false,
+  ranges: {
+     'Today': [moment(), moment()],
+     'Yesterday': [moment().subtract(1, 'days'), moment().subtract(1, 'days')],
+     'Last 7 Days': [moment().subtract(6, 'days'), moment()],
+     'Last 30 Days': [moment().subtract(29, 'days'), moment()],
+     'This Month': [moment().startOf('month'), moment().endOf('month')],
+     'Last Month': [moment().subtract(1, 'month').startOf('month'), moment().subtract(1, 'month').endOf('month')]
+  },
+  opens: 'left',
+  drops: 'down',
+  buttonClasses: ['btn', 'btn-sm'],
+  applyClass: 'btn-primary',
+  cancelClass: 'btn-default',
+  separator: ' to ',
+  locale: {
+      applyLabel: 'Submit',
+      cancelLabel: 'Cancel',
+      fromLabel: 'From',
+      toLabel: 'To',
+      customRangeLabel: 'Custom',
+      daysOfWeek: ['Su', 'Mo', 'Tu', 'We', 'Th', 'Fr','Sa'],
+      monthNames: ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'],
+      firstDay: 1
+  }
+}, function(start, end, label) {
+  fetchTweetsJson(start.format('YYYY-MM-DD'), end.format('YYYY-MM-DD'));
+});
 
 var width = 960,
     height = 500,
@@ -302,28 +334,36 @@ function fetchBoxOfficeJson(start, end) {
 function initialize() {
   //$.getJSON( '/login', function(response) {
     // if(response && response.success) {
-      getData('topstate', drawTopState);
-      getData('topday', drawTopDay);
-      getData('topcity', drawTopCity);
-      getData('topsentiment', drawTopSentiment);
-      getData('topthreelanguages', drawDonut);
-      getData('tweetcountpergender', drawGenderChart);
-      getData('tweetscountpersentiment', drawDonut);
-      getData('tweetsperday', drawDailyTweets);
-      getData('tweetspermonth', drawDailyTweets);
-      getData('sentimentsandcountovertime', drawSentimentCountOverTime);
-      getData('tweetscountpersentimentandlanguage', drawSentimentsPerLanugage);
+      // getData('topstate', drawTopState);
+      // getData('topday', drawTopDay);
+      // getData('topcity', drawTopCity);
+      // getData('topsentiment', drawTopSentiment);
+      // getData('topthreelanguages', drawDonut);
+      // getData('tweetcountpergender', drawGenderChart);
+      // getData('tweetscountpersentiment', drawDonut);
+      // getData('tweetsperday', drawDailyTweets);
+      // getData('tweetspermonth', drawDailyTweets);
+      // getData('sentimentsandcountovertime', drawSentimentCountOverTime);
+      // getData('tweetscountpersentimentandlanguage', drawSentimentsPerLanugage);
       fetchTweetsJson();
-      fetchChartJson(); //chart.js
-      fetchBoxOfficeJson();
+      // fetchChartJson(); //chart.js
+      // fetchBoxOfficeJson();
     //} else {
       //console.log("Error: Login Failed");
     //}
   //});
 }
 
-function getData(service, callback) {
-  $.getJSON('/api/service/get/data/visualize/'+service, function(result) {
+function getData(service, callback, start, end) {
+  var start = typeof start !== 'undefined' ? start : moment().format('MM'),
+      end = typeof end !== 'undefined' ? end : moment().format('YYYY');
+
+  $.getJSON('/api/service/get/data/visualize/'+service, 
+    {
+      start: start,
+      end: end
+    },
+    function(result) {
       callback(result.err, result.data, service)
   });
   return false;
@@ -547,10 +587,10 @@ function drawDailyTweets(err, data, service) {
     }
 
     var margin = {top: 50, right: 55, bottom: 30, left: 75},
-        width  = 1000 - margin.left - margin.right,
-        height = 500  - margin.top  - margin.bottom,
-        parse = d3.time.format(incomingFormat).parse,
-        format = d3.time.format(chartformat);
+      width  = 1000 - margin.left - margin.right,
+      height = 500  - margin.top  - margin.bottom,
+      parse = d3.time.format(incomingFormat).parse,
+      format = d3.time.format(chartformat);
 
     var x = d3.scale.ordinal()
         .rangeRoundBands([0, width], .1);
@@ -565,99 +605,99 @@ function drawDailyTweets(err, data, service) {
     var color = d3.scale.ordinal()
         .range(["#4CAF50", "#CC3333", "#FFCC00", "#2196F3"]);
 
-    var svg = d3.select(chartclass).append("svg")
-        .attr("width",  '100%')
-        .attr("height", height + margin.top  + margin.bottom)
-      .append("g")
-        .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
-        
+    var svg = d3.select(chartclass).html("").append("svg")
+    .attr("width",  '100%')
+    .attr("height", height + margin.top  + margin.bottom)
+    .append("g")
+    .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
+
     var labelVar = 'DATE';
     var varNames = d3.keys(data[0]).filter(function (key) { return key !== labelVar;});
     color.domain(varNames);
         
-        data.forEach(function (d) {
-          var y0 = 0;
-          d.mapping = varNames.map(function (name) { 
-            return {
-              name: name,
-              label: d[labelVar],
-              y0: y0,
-              y1: y0 += +d[name]
-            };
-          });
-          d.total = d.mapping[d.mapping.length - 1].y1;
-        });
+    data.forEach(function (d) {
+      var y0 = 0;
+      d.mapping = varNames.map(function (name) { 
+        return {
+          name: name,
+          label: d[labelVar],
+          y0: y0,
+          y1: y0 += +d[name]
+        };
+      });
+      d.total = d.mapping[d.mapping.length - 1].y1;
+    });
 
-        x.domain(data.map(function (d) { return format(parse(d.DATE)); }));
-        y.domain([0, d3.max(data, function (d) { return d.total; })]);
+    x.domain(data.map(function (d) { return format(parse(d.DATE)); }));
+    y.domain([0, d3.max(data, function (d) { return d.total; })]);
 
-        svg.append("g")
-            .attr("class", "x axis")
-            .attr("transform", "translate(0," + height + ")")
-            .call(xAxis);
+    svg.append("g")
+        .attr("class", "x axis")
+        .attr("transform", "translate(0," + height + ")")
+        .call(xAxis);
 
-        svg.append("g")
-            .attr("class", "y axis")
-            .call(yAxis)
-          .append("text")
-            .attr("transform", "rotate(-90)")
-            .attr("y", 6)
-            .attr("dy", ".71em")
-            .style("text-anchor", "end")
-            .text("Number of Tweets");
-        
-        var selection = svg.selectAll(".series")
-            .data(data)
-          .enter().append("g")
-            .attr("class", "series")
-            .attr("transform", function (d) { return "translate(" + x(format(parse(d.DATE))) + ",0)"; });
+    svg.append("g")
+        .attr("class", "y axis")
+        .call(yAxis)
+      .append("text")
+        .attr("transform", "rotate(-90)")
+        .attr("y", 6)
+        .attr("dy", ".71em")
+        .style("text-anchor", "end")
+        .text("Number of Tweets");
+    
+    var selection = svg.selectAll(".series")
+        .data(data)
+      .enter().append("g")
+        .attr("class", "series")
+        .attr("transform", function (d) { return "translate(" + x(format(parse(d.DATE))) + ",0)"; });
 
-        selection.selectAll("rect")
-          .data(function (d) { return d.mapping; })
-        .enter().append("rect")
-          .attr("width", x.rangeBand())
-          .attr("y", function (d) { return y(d.y1); })
-          .attr("height", function (d) { return y(d.y0) - y(d.y1); })
-          .style("fill", function (d) { return color(d.name); })
-          .style("stroke", "grey")
-          .on("mouseover", function (d) { showPopover.call(this, d); })
-          .on("mouseout",  function (d) { removePopovers(); })
-        
-        var legend = svg.selectAll(".legend")
-            .data(varNames.slice().reverse())
-          .enter().append("g")
-            .attr("class", "legend")
-            .attr("transform", function (d, i) { return "translate(90," + i * 20 + ")"; });
-        legend.append("rect")
-            .attr("x", width - 18)
-            .attr("width", 18)
-            .attr("height", 18)
-            .style("fill", color);
-        legend.append("text")
-            .attr("x", width - 18)
-            .attr("y", 9)
-            .attr("dy", ".35em")
-            .style("text-anchor", "end")
-            .text(function (d) { return d; });
+    selection.selectAll("rect")
+      .data(function (d) { return d.mapping; })
+    .enter().append("rect")
+      .attr("width", x.rangeBand())
+      .attr("y", function (d) { return y(d.y1); })
+      .attr("height", function (d) { return y(d.y0) - y(d.y1); })
+      .style("fill", function (d) { return color(d.name); })
+      .style("stroke", "grey")
+      .on("mouseover", function (d) { showPopover.call(this, d); })
+      .on("mouseout",  function (d) { removePopovers(); })
+    
+    var legend = svg.selectAll(".legend")
+        .data(varNames.slice().reverse())
+      .enter().append("g")
+        .attr("class", "legend")
+        .attr("transform", function (d, i) { return "translate(90," + i * 20 + ")"; });
+    legend.append("rect")
+        .attr("x", width - 18)
+        .attr("width", 18)
+        .attr("height", 18)
+        .style("fill", color);
+    legend.append("text")
+        .attr("x", width - 18)
+        .attr("y", 9)
+        .attr("dy", ".35em")
+        .style("text-anchor", "end")
+        .text(function (d) { return d; });
 
-        function removePopovers () {
-          $('.popover').each(function() {
-            $(this).remove();
-          }); 
-        }
-        function showPopover (d) {
-          $(this).popover({
-            title: d.name,
-            placement: 'auto top',
-            container: 'body',
-            trigger: 'manual',
-            html : true,
-            content: function() { 
-              return "Date: " + d.label + 
-                     "<br/>Tweets: " + d3.format(",")(d.value ? d.value: d.y1 - d.y0); }
-          });
-          $(this).popover('show')
-        }
+    function removePopovers () {
+      $('.popover').each(function() {
+        $(this).remove();
+      }); 
+    }
+    function showPopover (d) {
+      $(this).popover({
+        title: d.name,
+        placement: 'auto top',
+        container: 'body',
+        trigger: 'manual',
+        html : true,
+        content: function() { 
+          return "Date: " + d.label + 
+                 "<br/>Tweets: " + d3.format(",")(d.value ? d.value: d.y1 - d.y0); }
+      });
+      $(this).popover('show')
+    }
   }
 }
 
@@ -694,7 +734,7 @@ function drawSentimentCountOverTime (err, data) {
     
     var color = d3.scale.ordinal()
         .range(["#4CAF50", "#CC3333", "#FFCC00", "#2196F3"]);    
-    var svg = d3.select(".sentiments-tweets-count-over-time").append("svg")
+    var svg = d3.select(".sentiments-tweets-count-over-time").html("").append("svg")
         .attr("width",  '100%')
         .attr("height", height + margin.top  + margin.bottom)
       .append("g")

@@ -35,35 +35,36 @@ $('#btn-visualize').click(function() {
   window.location.href = url;
 });
 
-$('#btn-load').click(function() {
-  var searchString = $("#search-field").val();
-  if(searchString) {
-    console.log(searchString)
-    loadMovieData(searchString);
+$('#btn-retrieve').click(function() {
+  var searchMovieString = $(".search-movie").val();
+  var searchTwitterString = $(".search-twitter").val();
+  if (searchMovieString && searchTwitterString) {
+    loadMovieData(searchMovieString, searchTwitterString);
   } else {
-    $('#search-field').addClass('warning');
+    $('.search-movie').addClass('warning');
+    $('.search-twitter').addClass('warning');
   }
 });
 
-function getInputParams(string) {
-  var first = string.substring(3,string.indexOf("-t")-1);
-  var second = string.substring(string.indexOf("-t")+3);
-  return {boxOffice: first,
-    twitter: second
-  }
-}
-
-function loadMovieData(string) {
-  $.getJSON('/movie/load/search', getInputParams(string), function(result) {
-    console.log(result)
-    if(!result.err && result.data) {
-      $('.message').append('<div class="message-box message-success">Title: ' + result.data.theNumbers.name +  ', Box Office Entries : ' + result.data.theNumbers.performance.length
-       + ', Tweets Count: ' + result.data.twitterInsights.count + '</div>');
-    } else {
-      $('.message').append('<div class="message-box message-err">'+result.data.message+'</div>');
+function loadMovieData(movieTitle, twitterQuery) {
+  $.getJSON('/movie/load/search', 
+    {
+      boxOffice: movieTitle,
+      twitter: twitterQuery
+    }, 
+    function(result) {
+      console.log(result)
+      if(!result.err && result.data) {
+        $('.message').append('<div class="message-box message-success">Title: ' + result.data.theNumbers.name +  ', Box Office Entries : ' + result.data.theNumbers.performance.length
+         + ', Tweets Count: ' + result.data.twitterInsights.count + '</div>');
+      } else {
+        $('.message').append('<div class="message-box message-err">'+result.data.message+'</div>');
+      }
+      $('.search-movie').removeClass('warning');
+      $('.search-twitter').removeClass('warning');
+      $('.message-box').fadeOut(100000, 'linear');
     }
-    $('.message-box').fadeOut(100000, 'linear');
-  });
+  );
   return false;
 }
 
@@ -76,15 +77,21 @@ function insertReplaceMovieDataCallback(result) {
     $('.message').append('<div class="message-box message-err">'+result.data.message+'</div>');
     $('.message-box').fadeOut(100000, 'linear');
   }
+  $('.search-movie').removeClass('warning');
+  $('.search-twitter').removeClass('warning');
 }
 
 $('#btn-insert-replace').click(function(e) {
-  var query = $("#search-field").val();
-  if(query) {
+  var movieTitle = $(".search-movie").val();
+  var twitterQuery = $(".search-twitter").val();
+  if(movieTitle && twitterQuery) {
     $.ajax({
       type: 'GET',
       url: '/movie/replace/query',
-      data: getInputParams(query),
+      data: {
+        boxOffice: movieTitle,
+        twitter: twitterQuery
+      },
       dataType: 'json',
       success: insertReplaceMovieDataCallback,
       error: function(x, t, m) {
@@ -110,7 +117,8 @@ $('#btn-insert-replace').click(function(e) {
       // }
     });
   } else {
-    $('#search-field').addClass('warning');
+    $('.search-movie').addClass('warning');
+    $('.search-twitter').addClass('warning');
   }
   // e.stopImmediatePropagation();
   e.preventDefault();

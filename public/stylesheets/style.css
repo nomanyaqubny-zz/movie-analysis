@@ -48,16 +48,16 @@ body {
 }
 
 .leaflet-right .leaflet-control {
-    margin-right: 10px;
+    margin-right: 20px;
 }
 .leaflet-top .leaflet-control {
-    margin-top: 40px;
+    margin-top: 50px;
 }
 .leaflet-right .leaflet-control {
     float: right;
 }
 .leaflet-bottom .leaflet-control {
-    margin-bottom: 10px;
+    margin-bottom: 20px;
 }
 .leaflet-popup-pane, .leaflet-control {
     cursor: auto;
@@ -228,7 +228,7 @@ tweetscountpersentiment
   margin-left: 2px;
   float: right;
 }
-#btn-delete, #btn-load {
+#btn-delete, #btn-retrieve {
   float: right;
 }
 .select-action, .search-action {
@@ -237,6 +237,17 @@ tweetscountpersentiment
 
 #select-movie-list, #search-field {
   margin-top: 30px;
+}
+
+.search-movie {
+  width: 39% !important;
+  display: inline !important;
+  margin-right: 1%;
+}
+
+.search-twitter {
+  width: 60% !important;
+  display: inline !important;
 }
 
 /*DASHBOARD*/
@@ -377,4 +388,13 @@ tweetscountpersentiment
 .message-success {
   background: #E2FFAC;
   color: #397D02;
+}
+
+.warning {
+  border-color: #EF5D58 !important;
+  background-color: #FAF6E8 !important;
+}
+
+.datapickerfield {
+  margin: 10px 20px 0 0 !important;
 }

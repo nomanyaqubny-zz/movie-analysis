@@ -30,19 +30,21 @@ block content
 				#rightform
 					#or OR
 					h1 Load a movie data
-					input#search-field.form-control(type="search" name="search" placeholder="-b Movie title -t Twitter query")
+					#search-field
+						input.search-movie.form-control(type="search" name="movie-search" placeholder="Movie Title")
+						input.search-twitter.form-control(type="search" name="twitter-search" placeholder="Twitter Query")
 					.search-action
 						input#btn-insert-replace.btn.btn-default(type="submit" name="Replace" value="Insert/Replace")
-						input#btn-load.btn.btn-default(type="submit" name="Retrieve" value="Retrieve")
+						input#btn-retrieve.btn.btn-default(type="submit" name="Retrieve" value="Retrieve")
 		hr.featurette-divider
-		p.lead This report analyzes the actual box office success of the movie "American Sniper" (available online from 
+		p.lead This report analyzes the actual box office success of the movie (available online from 
 			a(href="http://www.the-numbers.com/daily-box-office-chart") www.the-numbers.com/daily-box-office-chart
 			| ) and how it correlates with the volume of tweets in Twitter. By breaking down the tweets geographically it is possible to understand the relative local tweet volume trend per US state and identify those states that require special marketing attention to support box office success of the movie.
 		br
 		p.lead The entire analysis and creation of this report has been done in Bluemix. The following Bluemix elements have been used:
 		ol
-			li IBM Insights for Twitter (BETA)
-			li IBM dashDB (including a  prototype extension to load Twitter data)
+			li IBM Insights for Twitter
+			li IBM dashDB
 			li RStudio (via dashDB service)
 			li Node.JS runtime
 		hr.featurette-divider

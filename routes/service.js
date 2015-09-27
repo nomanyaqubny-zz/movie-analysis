@@ -66,7 +66,7 @@ function selectQueryByServiceName(serviceName, tableName, movieId, start, end) {
 			query = "SELECT SUBSTR(CHAR(DATE(MSGPOSTEDTIME),ISO),1,7) AS DATE, SUM(case when MSGSENTIMENT='POSITIVE' then 2 else 0 end) as POSITIVE, sum(case when MSGSENTIMENT='NEGATIVE' then 4 else 0 end) as NEGATIVE, sum(case when MSGSENTIMENT='AMBIVALENT' then 2 else 0 end) as AMBIVALENT, sum(case when MSGSENTIMENT='NEUTRAL' then 1 else 0 end) as NEUTRAL FROM "+tableName+" WHERE YEAR(MSGPOSTEDTIME)=2015 GROUP BY SUBSTR(CHAR(DATE(MSGPOSTEDTIME),ISO),1,7)";
 			break;
 		case "tweetsperday":
-			query = "SELECT DATE(MSGPOSTEDTIME) AS DATE, SUM(case when MSGSENTIMENT='POSITIVE' then 3 else 0 end) as POSITIVE, sum(case when MSGSENTIMENT='NEGATIVE' then 4 else 0 end) as NEGATIVE, sum(case when MSGSENTIMENT='AMBIVALENT' then 2 else 0 end) as AMBIVALENT, sum(case when MSGSENTIMENT='NEUTRAL' then 1 else 0 end) as NEUTRAL FROM "+tableName+" WHERE MONTH(MSGPOSTEDTIME)=6 AND YEAR(MSGPOSTEDTIME)=2015 GROUP BY DATE(MSGPOSTEDTIME)";
+			query = "SELECT DATE(MSGPOSTEDTIME) AS DATE, SUM(case when MSGSENTIMENT='POSITIVE' then 3 else 0 end) as POSITIVE, sum(case when MSGSENTIMENT='NEGATIVE' then 4 else 0 end) as NEGATIVE, sum(case when MSGSENTIMENT='AMBIVALENT' then 2 else 0 end) as AMBIVALENT, sum(case when MSGSENTIMENT='NEUTRAL' then 1 else 0 end) as NEUTRAL FROM "+tableName+" WHERE MONTH(MSGPOSTEDTIME)= "+start+" AND YEAR(MSGPOSTEDTIME)= "+end+"  GROUP BY DATE(MSGPOSTEDTIME)";
 			break;
 		case "topsentiment":
 			query = "SELECT MSGSENTIMENT AS SENTIMENT, 10*COUNT(MSGID) AS COUNT FROM "+tableName+" INNER JOIN US_STATES ON SMAAUTHORSTATE=STATE GROUP BY MSGSENTIMENT ORDER BY COUNT DESC FETCH FIRST ROW ONLY";
@@ -78,7 +78,7 @@ function selectQueryByServiceName(serviceName, tableName, movieId, start, end) {
 			query = "SELECT USERLANGUAGE AS LANGUAGE, SUM(case when MSGSENTIMENT='POSITIVE' then 3 else 0 end) as POSITIVE, sum(case when MSGSENTIMENT='NEGATIVE' then 4 else 0 end) as NEGATIVE, sum(case when MSGSENTIMENT='AMBIVALENT' then 2 else 0 end) as AMBIVALENT, sum(case when MSGSENTIMENT='NEUTRAL' then 1 else 0 end) as NEUTRAL FROM "+tableName+" WHERE USERLANGUAGE IN ('en','es','de') GROUP BY USERLANGUAGE";
 			break;
 		case "sentimentsandcountovertime":
-			query = "SELECT DATE(MSGPOSTEDTIME) AS DATE, SUM(case when MSGSENTIMENT='POSITIVE' then 10 else 0 end) as POSITIVE, sum(case when MSGSENTIMENT='NEGATIVE' then 15 else 0 end) as NEGATIVE, sum(case when MSGSENTIMENT='AMBIVALENT' then 12 else 0 end) as AMBIVALENT, sum(case when MSGSENTIMENT='NEUTRAL' then 1 else 0 end) as NEUTRAL FROM "+tableName+" WHERE MONTH(MSGPOSTEDTIME)=6 AND YEAR(MSGPOSTEDTIME)=2015 GROUP BY DATE(MSGPOSTEDTIME)";
+			query = "SELECT DATE(MSGPOSTEDTIME) AS DATE, SUM(case when MSGSENTIMENT='POSITIVE' then 10 else 0 end) as POSITIVE, sum(case when MSGSENTIMENT='NEGATIVE' then 15 else 0 end) as NEGATIVE, sum(case when MSGSENTIMENT='AMBIVALENT' then 12 else 0 end) as AMBIVALENT, sum(case when MSGSENTIMENT='NEUTRAL' then 1 else 0 end) as NEUTRAL FROM "+tableName+" WHERE MONTH(MSGPOSTEDTIME)= "+start+" AND YEAR(MSGPOSTEDTIME)= "+end+" GROUP BY DATE(MSGPOSTEDTIME)";
 			break;
 	}
 	return query;

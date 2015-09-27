@@ -1,19 +1,20 @@
 extends head
 
 append head
-	link(rel='stylesheet', href='/stylesheets/daterangepicker-bs3.css')
+	link(rel='stylesheet', href='https://cdn.jsdelivr.net/bootstrap.daterangepicker/2/daterangepicker.css')
 
 block scripts
 	script(src='http://ajax.googleapis.com/ajax/libs/jquery/2.0.3/jquery.min.js')
+	script(src='http://code.jquery.com/ui/1.11.4/jquery-ui.js')
 	script(src="http://d3js.org/d3.v3.min.js")
 	script(src='/javascripts/d3.min.js')
 	script(src='/javascripts/topojson.min.js')
 	script(type="text/javascript" src="/javascripts/bootstrap.min.js")
 	script(type="text/javascript" src="/javascripts/tooltipsy.min.js")
 	script(src='/javascripts/moment.min.js')
-	script(src='/javascripts/daterangepicker.js')
+	script(src='https://cdn.jsdelivr.net/bootstrap.daterangepicker/2/daterangepicker.js')
 	script(src='/javascripts/chart.js')
-	script(src='/javascripts/bounding-box.js')
+	script(src='/javascripts/movie-analysis.js')
 
 block content
 	header.header
@@ -86,6 +87,7 @@ block content
 						.col-xs-12
 							.panel.panel-default.mb20.panel-hovered
 								.panel-heading Tweets Count Per Day
+								input.datepicker.form-control.datapickerfield(type="text", name="date-range-tweets-per-day", data-time-picker="true", value= 'September 2015')
 								.panel-body.text-center.day-tweets-count
 					.row
 						.col-xs-12
@@ -95,7 +97,8 @@ block content
 					.row
 						.col-xs-12
 							.panel.panel-default.mb20.panel-hovered
-								.panel-heading Tweets Cour Per Sentiment Over Time
+								.panel-heading Tweets Count Per Sentiment Over Time
+								input.datepicker.form-control.datapickerfield(type="text", name="date-range-tweets-over-time", data-time-picker="true", value= 'September 2015')
 								.panel-body.text-center.sentiments-tweets-count-over-time
 					.row
 						.col-xs-12
@@ -111,7 +114,7 @@ block content
 				b public interest in "#{title}" expressed through tweets 
 				| broken down by US state. Please note that the numbers are an extrapolation based on a 10% sample of all tweets.
 			.map.map1.leaflet-container
-				input.datepicker(type="text", name="date-range-map1", data-time-picker="true", value= '01-01-2015 till Today')
+				input.datepicker.form-control.datapickerfield(type="text", name="date-range-map1", data-time-picker="true", value= '01-01-2015 till Today')
 				.leaflet-control-container
 					.leaflet-top.leaflet-right
 						.info.leaflet-control
@@ -147,7 +150,7 @@ block content
 		.featurette
 			h2.featurette-heading Dependency between actual box office success and tweet volume
 			p.lead This diagram highlights how the actual box office success of the movie correlates with the general tweet volume trend over time. Even though there are the spikes for box office numbers on weekends, the general trend correlates with the decline of tweet volume after movie launch.
-			input.datepicker(type="text", name="date-range-chart", data-time-picker="true", value= '01-01-2015 till Today')
+			input.datepicker.form-control.datapickerfield(type="text", name="date-range-chart", data-time-picker="true", value= '01-01-2015 till Today')
 			.chart
 		
 		hr.featurette-divider
