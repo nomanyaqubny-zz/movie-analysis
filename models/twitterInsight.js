@@ -78,7 +78,7 @@ TwitterInsight.prototype = {
                               //console.log(err);
                               //callback(err, progress)
                            //}
-                        }, (n*MAX_TWEETS));
+                        //}, (n*MAX_TWEETS));
                     }, function(err, data) {
                         return callback(err, progress);
                     });
