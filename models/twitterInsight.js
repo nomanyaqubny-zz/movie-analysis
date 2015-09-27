@@ -16,7 +16,7 @@ var query,
 
 function TwitterInsight(searchString) {
     query = searchString;
-    MAX_TWEETS = 500;
+    MAX_TWEETS = 100;
     progress = 0;
     populateSchemaTweetMap();
     getColumns();
@@ -66,13 +66,13 @@ TwitterInsight.prototype = {
                     async.timesLimit(times, 5, function(n, next) {
                         retrieveInsight(url, query, function(err, data) {
                             if (!err && data['tweets'].length > 0) {
-                                //insertTweets(db, tableName, data['tweets'], function(err, message, rows) {
-                                    //if(!err) {
-                                        progress += 500;
+                                insertTweets(db, tableName, data['tweets'], function(err, message, rows) {
+                                    if(!err) {
+                                        progress += rows;
                                         process.stdout.write("\rso far: " + progress);
-                                    //}
+                                    }
                                     next(err, data);
-                                //});
+                                });
                             } else {
                                 console.log(err)
                                 // callback(err, progress)
