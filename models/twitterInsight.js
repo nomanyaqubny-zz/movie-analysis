@@ -68,7 +68,6 @@ TwitterInsight.prototype = {
                             //if (!err && data['tweets'].length > 0) {
                                 //insertTweets(db, tableName, data['tweets'], function(err, message, rows) {
                                     //if(!err) {
-                                    	console.log(n);
                                         progress += 500;
                                         process.stdout.write("\rso far: " + progress);
                                     //}
