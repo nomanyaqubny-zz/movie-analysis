@@ -71,7 +71,7 @@ TwitterInsight.prototype = {
                                         progress += 500;
                                         process.stdout.write("\rso far: " + progress);
                                     //}
-                                    //next(err, data);
+                                    next(err, data);
                                 //});
                             } else {
                                 console.log(err)
