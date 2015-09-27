@@ -103,7 +103,7 @@ $('#btn-insert-replace').click(function(e) {
             console.log(m);
         }
       },
-      timeout: 360000000 //60 minutes
+      timeout: 3600000000 //60 minutes
       // progress: function(evt) {
       //     if (evt.lengthComputable) {
       //         console.log("Loaded " + parseInt( (evt.loaded / evt.total * 100), 10) + "%");
