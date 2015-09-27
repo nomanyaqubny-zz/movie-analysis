@@ -16,7 +16,7 @@ var query,
 
 function TwitterInsight(searchString) {
     query = searchString;
-    MAX_TWEETS = 50;
+    MAX_TWEETS = 500;
     progress = 0;
     populateSchemaTweetMap();
     getColumns();
@@ -63,24 +63,48 @@ TwitterInsight.prototype = {
                     //Twitter for Insight provides at max 500 tweets per request
                     //call the retrieve and insert function total number of tweets / max tweets per request
                     var times =  Math.ceil(count / MAX_TWEETS);
-                    async.timesLimit(times, 2, function(n, next) {
+                    //async.timesLimit(times, 2, function(n, next) {
                         //retrieveInsight(url, query, function(err, data) {
                             //if (!err && data['tweets'].length > 0) {
                                 //insertTweets(db, tableName, data['tweets'], function(err, message, rows) {
                                     //if(!err) {
-                                        progress += MAX_TWEETS;
-                                        process.stdout.write("\rso far: " + progress);
+                                        //progress += MAX_TWEETS;
+                                        //process.stdout.write("\rso far: " + progress);
                                     //}
-                                    next(false, null);
+                                    //next(false, null);
                                 //});
                             //} else {
                               //  console.log(err);
                                 // callback(err, progress)
                            // }
                         //}, (n*MAX_TWEETS));
-                    }, function(err, data) {
-                        return callback(err, progress);
-                    });
+                    //}, function(err, data) {
+                        //return callback(err, progress);
+                    //});
+                    
+                    /*--------------------------------*/
+                    console.log(count)
+                    for (var n = 0; n < times; n++) {
+                    // async.timesLimit(times, 5, function(n, next) {
+                        retrieveInsight(url, query, function(err, data) {
+                            if (!err && data['tweets'].length > 0) {
+                                insertTweets(db, tableName, data['tweets'], function(err, message, rows) {
+                                    if(!err) {
+                                        progress += rows;
+                                        process.stdout.write("\rso far: " + progress +'/'+ count);
+                                    }
+                                    if(progress>=count || err) {
+                                        callback(err, progress);
+                                    }
+                                    // next(err, data);
+                                });
+                            } else {
+                                progress+=500;
+                                console.log(err)
+                            }
+                        }, (n*MAX_TWEETS));
+                    }
+                    console.log("out of loop")
                 } else {
                     callback(err, progress);
                 }
