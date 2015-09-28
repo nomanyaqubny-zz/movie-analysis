@@ -8,7 +8,7 @@ var async = require('async'),
     version = 'api:' + config.get("api:version");
 
 var pool = new http.Agent;
-    pool.maxSockets = Infinity;
+    pool.maxSockets = 500;
 
 var query, 
     count, 
