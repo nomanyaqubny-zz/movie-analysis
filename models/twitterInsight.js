@@ -8,7 +8,7 @@ var async = require('async'),
     version = 'api:' + config.get("api:version");
 
 var pool = new http.Agent;
-    pool.maxSockets = 500;
+    pool.maxSockets = Infinity;
 
 var query, 
     count, 
@@ -77,7 +77,6 @@ TwitterInsight.prototype = {
                                         process.stdout.write("\rso far: " + progress);
                                     }
                                     next(err, message);
-                                    console.log("twitterInsight.js: insertTweets callback")
                                 });
                             } else if (err === true) {
                             	console.log("twitterInsight.js: retrieveInsight callback else if")
