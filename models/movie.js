@@ -111,8 +111,10 @@ Movie.prototype = {
 					    }
 					}, function(err, results) {
 					    // results is now equals to: {one: 'abc\n', two: 'xyz\n'}
-					    console.log("Movie.js: asnc result")
+					    console.log("Movie.js: asnyc result")
 					    console.log(results);
+					   	if(err && !results.theNumbers.performance) results.message = results.theNumbers.message;
+						else if(err && !results.twitterInsights.data) results.message = results.twitterInsights.message.description;
 					    callback(err, results);
 					});
 				} else {
