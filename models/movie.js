@@ -111,6 +111,7 @@ Movie.prototype = {
 					    }
 					}, function(err, results) {
 					    // results is now equals to: {one: 'abc\n', two: 'xyz\n'}
+					    console.log("Movie.js: asnc result")
 					    console.log(results);
 					    callback(err, results);
 					});
