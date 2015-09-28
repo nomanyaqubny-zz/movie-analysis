@@ -1,10 +1,14 @@
 "use strict"
 
 var async = require('async'),
+    http = require('http'),
     request = require('request'),
     Database = require('./database'),
     config = require('nconf'),
     version = 'api:' + config.get("api:version");
+
+var pool = new http.Agent;
+    pool.maxSockets = 500;
 
 var query, 
     count, 
@@ -113,6 +117,7 @@ function retrieveInsight(url, query, callback, from) {
         method: "GET",
         url: url,
         qs: params,
+        pool: pool,
         // auth: {
         //     'user': 'f6204541d9434de8a1363a9214fe5455',
         //     'pass': 'oUzn5yaGuq'
