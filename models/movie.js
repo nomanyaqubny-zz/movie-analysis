@@ -105,7 +105,7 @@ Movie.prototype = {
 					    		var twitterInsight = new TwitterInsight(searchStringTwitter);
 								twitterInsight.insert(name, tableName, function(err, data) {
 									// twitterInsight.print();
-									tweetsCount = data;
+									tweetsCount = data.entries;
 									callback(err, data);
 								});
 					    }

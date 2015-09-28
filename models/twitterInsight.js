@@ -75,18 +75,20 @@ TwitterInsight.prototype = {
                                         progress += rows;
                                         process.stdout.write("\rso far: " + progress);
                                     }
-                                    next(err, data);
+                                    next(err, message);
                                     console.log("twitterInsight.js: insertTweets callback")
                                 });
-                            } else {
+                            } else if (err === true) {
                            		console.log("twitterInsight.js: retrieveInsight callback")
                            		console.log(err);
+                           	} else {
+                           		console.log("twitterInsight.js: retrieveInsight callback")
                            		console.log(data);
-                              //callback(err, progress)
-                           }
+                              	next(err, data);
+                           	}
                         }, (n*MAX_TWEETS));
                     }, function(err, data) {
-                        return callback(err, progress);
+                        callback(err, {entries: progress, data: data});
                     });
                 } else {
                 	console.log("twitterInsight.js: createMovieTable callback")
