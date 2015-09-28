@@ -79,12 +79,12 @@ TwitterInsight.prototype = {
                                     console.log("twitterInsight.js: insertTweets callback")
                                 });
                             } else if (err === true) {
-                           		console.log("twitterInsight.js: retrieveInsight callback")
-                           		console.log(err);
-                           	} else {
-                           		console.log("twitterInsight.js: retrieveInsight callback")
+                            	console.log("twitterInsight.js: retrieveInsight callback else if")
                            		console.log(data);
                               	next(err, data);
+                           	} else {
+								console.log("twitterInsight.js: retrieveInsight callback else")
+                           		console.log(err);
                            	}
                         }, (n*MAX_TWEETS));
                     }, function(err, data) {
