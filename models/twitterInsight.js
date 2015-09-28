@@ -70,13 +70,13 @@ TwitterInsight.prototype = {
                     var times =  Math.ceil(count / MAX_TWEETS);
                     async.timesSeries(times, function(n, next) {
                         retrieveInsight(url, query, function(err, data) {
-                            if (!err && data['tweets'].length > 0) {
+                            /*if (!err && data['tweets'].length > 0) {
                                 insertTweets(db, tableName, data['tweets'], function(err, message, rows) {
                                     if(!err) {
                                         progress += rows;
                                         process.stdout.write("\rso far: " + progress);
                                     }
-                                    next(err, message);
+                                    next(err, null);
                                 });
                             } else if (err === true) {
                             	console.log("twitterInsight.js: retrieveInsight callback else if")
@@ -86,6 +86,13 @@ TwitterInsight.prototype = {
 								console.log("twitterInsight.js: retrieveInsight callback else")
                            		console.log(err);
                            	}
+                           	*/
+                           	
+                           	//TEST LNES HERE
+                           	progress += data['tweets'].length;
+                            process.stdout.write("\rso far: " + progress);
+                            next(err, null);
+                            
                         }, (n*MAX_TWEETS));
                     }, function(err, data) {
                         callback(err, {entries: progress, data: data});
