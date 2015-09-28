@@ -27,6 +27,7 @@ function TwitterInsight(searchString) {
 
     var services = JSON.parse(process.env.VCAP_SERVICES || "{}");
     insightHOST = services["twitterinsights"] ? services["twitterinsights"][0].credentials.url : config.get(version + ':twitterInsights').url;
+    console.log("twitterInsihgt.js: insighthost = " + insightHOST)
 }
 
 TwitterInsight.prototype = {

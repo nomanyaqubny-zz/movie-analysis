@@ -81,6 +81,7 @@ Movie.prototype = {
 				});
 		    }
 		}, function(err, results) {
+			console.log(results)
 			if(err && !results.theNumbers.performance) results.message = results.theNumbers.message;
 			else if(err && !results.twitterInsights.data) results.message = results.twitterInsights.message.description;
 		    callback(err, results);
