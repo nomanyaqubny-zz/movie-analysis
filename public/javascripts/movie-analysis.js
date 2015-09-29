@@ -334,20 +334,20 @@ function fetchBoxOfficeJson(start, end) {
 function initialize() {
   //$.getJSON( '/login', function(response) {
     // if(response && response.success) {
-      // getData('topstate', drawTopState);
-      // getData('topday', drawTopDay);
-      // getData('topcity', drawTopCity);
-      // getData('topsentiment', drawTopSentiment);
-      // getData('topthreelanguages', drawDonut);
-      // getData('tweetcountpergender', drawGenderChart);
-      // getData('tweetscountpersentiment', drawDonut);
-      // getData('tweetsperday', drawDailyTweets);
-      // getData('tweetspermonth', drawDailyTweets);
-      // getData('sentimentsandcountovertime', drawSentimentCountOverTime);
-      // getData('tweetscountpersentimentandlanguage', drawSentimentsPerLanugage);
+      getData('topstate', drawTopState);
+      getData('topday', drawTopDay);
+      getData('topcity', drawTopCity);
+      getData('topsentiment', drawTopSentiment);
+      getData('topthreelanguages', drawDonut);
+      getData('tweetcountpergender', drawGenderChart);
+      getData('tweetscountpersentiment', drawDonut);
+      getData('tweetsperday', drawDailyTweets);
+      getData('tweetspermonth', drawDailyTweets);
+      getData('sentimentsandcountovertime', drawSentimentCountOverTime);
+      getData('tweetscountpersentimentandlanguage', drawSentimentsPerLanugage);
       fetchTweetsJson();
-      // fetchChartJson(); //chart.js
-      // fetchBoxOfficeJson();
+      fetchChartJson(); //chart.js
+      //fetchBoxOfficeJson();
     //} else {
       //console.log("Error: Login Failed");
     //}
