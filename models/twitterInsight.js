@@ -68,7 +68,7 @@ TwitterInsight.prototype = {
                     //Twitter for Insight provides at max 500 tweets per request
                     //call the retrieve and insert function total number of tweets / max tweets per request
                     var times =  Math.ceil(count / MAX_TWEETS);
-                    async.timesSeries(times, function(n, next) {
+                    async.timesLimit(times, 5, function(n, next) {
                         retrieveInsight(url, query, function(err, data) {
                             /*if (!err && data['tweets'].length > 0) {
                                 insertTweets(db, tableName, data['tweets'], function(err, message, rows) {
