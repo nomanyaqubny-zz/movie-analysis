@@ -7,7 +7,7 @@ var timeout = require('connect-timeout');
 
 
 module.exports = function(app) {
-	//app.use(timeout(600000));
+	app.use(timeout(600000));
 	//app.use(haltOnTimedout);
  	// Define the routes
   	app.use('/', routes);
