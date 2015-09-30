@@ -89,6 +89,8 @@ router.get('/replace', function(req, res) {
 		console.log("Routes movie.js: replace callback")
 console.log(err)
 console.log(data)
+console.log(res)
+console.log(req)
 		if (err) {
 			res.json({
 				err : true,
@@ -100,6 +102,7 @@ console.log(data)
 				data: data
 			});
 		}
+		console.log("DEL")
 				delete req.session.retrieve;
 	});
 });
