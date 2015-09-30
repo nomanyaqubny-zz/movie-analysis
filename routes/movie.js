@@ -87,7 +87,8 @@ router.get('/replace', function(req, res) {
 	var sessionRetrieve = (typeof req.session.retrieve === "undefined") ? null : req.session.retrieve;
 	movie.replace(sessionRetrieve, req.query.boxOffice, req.query.twitter, function(err, data) {
 		console.log("Routes movie.js: replace callback")
-
+console.log(err)
+console.log(data)
 		if (err) {
 			res.json({
 				err : true,
