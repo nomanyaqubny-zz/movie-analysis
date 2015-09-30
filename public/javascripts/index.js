@@ -87,7 +87,7 @@ $('#btn-insert-replace').click(function(e) {
   if(movieTitle && twitterQuery) {
     $.ajax({
       type: 'GET',
-      url: '/movie/replace/query',
+      url: '/movie/replace',
       data: {
         boxOffice: movieTitle,
         twitter: twitterQuery
@@ -103,7 +103,7 @@ $('#btn-insert-replace').click(function(e) {
             console.log(m);
         }
       },
-      timeout: 360000000 //60 minutes
+      timeout: 600000 //60 minutes
       // progress: function(evt) {
       //     if (evt.lengthComputable) {
       //         console.log("Loaded " + parseInt( (evt.loaded / evt.total * 100), 10) + "%");

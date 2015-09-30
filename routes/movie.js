@@ -82,18 +82,22 @@ router.param('query', function(req, res, next, query) {
 	}
 });
 
-router.get('/replace/:query', function(req, res, next) {
-	if (req.err) {
-		res.json({
-			err : true,
-			data: req.data
-		});
-	} else {
-		res.json({
-			err : null,
-			data: req.data
-		});
-	}
+router.get('/replace', function(req, res) {
+	var sessionRetrieve = (typeof req.session.retrieve === "undefined") ? null : req.session.retrieve;
+	movie.replace(sessionRetrieve, req.query.boxOffice, req.query.twitter, function(err, data) {
+		delete req.session.retrieve;
+		if (err) {
+			res.json({
+				err : true,
+				data: data
+			});
+		} else {
+			res.json({
+				err : null,
+				data: data
+			});
+		}
+	});
 });
 
 router.get('/insert/:query', function(req, res, next) {
