@@ -1,4 +1,5 @@
 var express = require('express'),
+	timeout = require('connect-timeout'),
 	router = express.Router(),
 	Movie = require('../models/movie');
 
