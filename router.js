@@ -16,7 +16,8 @@ module.exports = function(app) {
   	app.use('/test', test);
   	
   	
-	function haltOnTimedout(req, res, next){
+	function haltOnTimedout(req, res, next) {
+		console.log("TIMEEEDDDDDDDDDDOUTTTTTTTTTTT");
 	  if (!req.timedout) next();
 	}
 };
