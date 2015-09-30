@@ -84,7 +84,6 @@ router.param('query', function(req, res, next, query) {
 });
 
 router.get('/replace', function(req, res) {
-	res.setTimeout(3600000);
 	var sessionRetrieve = (typeof req.session.retrieve === "undefined") ? null : req.session.retrieve;
 	movie.replace(sessionRetrieve, req.query.boxOffice, req.query.twitter, function(err, data) {
 		console.log("Routes movie.js: replace callback")
