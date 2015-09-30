@@ -133,6 +133,7 @@ Movie.prototype = {
 			this.delete(name, function(err, data) {
 				if(!err) {
 					self.insert(session, searchStringBoxOffice, searchStringTwitter, function(err, data) {
+						console.log("movie.js: replace: callback result")
 						callback(err, data);
 					});
 				} else {
