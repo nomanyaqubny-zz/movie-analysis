@@ -84,13 +84,15 @@ router.param('query', function(req, res, next, query) {
 });
 
 router.get('/replace', function(req, res) {
+	req.setTimeout(600000);
+	req.setTimeout(600000);
 	var sessionRetrieve = (typeof req.session.retrieve === "undefined") ? null : req.session.retrieve;
 	movie.replace(sessionRetrieve, req.query.boxOffice, req.query.twitter, function(err, data) {
 		console.log("Routes movie.js: replace callback")
-console.log(err)
-console.log(data)
-console.log(res)
-console.log(req)
+		console.log(err)
+		console.log(data)
+		console.log(res)
+		console.log(req)
 		if (err) {
 			res.json({
 				err : true,
@@ -103,7 +105,7 @@ console.log(req)
 			});
 		}
 		console.log("DEL")
-				delete req.session.retrieve;
+		delete req.session.retrieve;
 	});
 });
 
