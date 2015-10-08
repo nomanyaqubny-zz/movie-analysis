@@ -8,7 +8,7 @@ $(document).ready(function() {
   init();
 });
 
-function init (){
+function init() {
 	getAllMovies();
 }
 
@@ -61,7 +61,6 @@ function loadMovieData(movieTitle, twitterQuery) {
       twitter: twitterQuery
     },
     success: function(result) {
-      console.log(result)
       if(!result.err && result.data) {
         $('.message').append('<div class="message-box message-success">Title: ' + (result.data.theNumbers ? result.data.theNumbers.name : "null") +  ', Box Office Entries : ' + result.data.theNumbers.performance.length
          + ', Tweets Count: ' + (result.data.twitterInsights ? result.data.twitterInsights.count : "null") + '</div>');
@@ -78,7 +77,15 @@ function loadMovieData(movieTitle, twitterQuery) {
 
 function insertReplaceMovieDataCallback(result) {
   if(!result.err && result.data) {
-    getAllMovies();
+
+    $('#select-movie-list').append($('<option>', {
+      value: result.data.uri,
+      text: result.data.title
+    }));
+    $('#select-movie-list').val(result.data.uri)
+    $('#btn-visualize').addClass('blinkMe');
+
+
     $('.message').append('<div class="message-box message-success">Tweets Count: ' + result.data.twitterInsights.count +
       ' Box Office Entries : ' + result.data.theNumbers.data + '</div>');
   } else {

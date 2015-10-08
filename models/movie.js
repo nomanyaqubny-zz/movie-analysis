@@ -119,11 +119,12 @@ Movie.prototype = {
 					    }
 					}, function(err, results) {
 						console.log("insert callback")
+						results.uri = movieID+'/'+movieTitle.replace(/[^a-z\d ]+/gi, "").replace(/ /gi, "-").toLowerCase();
+						results.title = movieTitle
 						console.log(results)
 					   	if(err && results.theNumbers && results.theNumbers.err) {
 					   		results.message = results.theNumbers.message;
-					   	}
-						else if (err && results.twitterInsights) {
+					   	} else if (err && results.twitterInsights) {
 							results.message = results.twitterInsights.data.message.description;
 						}
 					    callback(err, results);

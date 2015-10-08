@@ -323,7 +323,7 @@ function fetchBoxOfficeJson(start, end) {
       var data = result.data;
       for (var i = 0; i < data.length; i++) {
         if(data[i].STATECODE !== null) {
-          num = data[i].DECLINERATE * 100;
+          num = data[i].DECLINERATE;
           stateDecRates[data[i].STATECODE] = Math.round(num * 100) / 100;
           stateNames[data[i].STATECODE] = data[i].STATENAME;
         }

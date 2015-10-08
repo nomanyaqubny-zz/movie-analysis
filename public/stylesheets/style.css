@@ -460,3 +460,11 @@ body.loading .modal {
   float: right;
   width: 20% !important;
 }
+
+.blinkMe {
+  animation: blinker 1s linear infinite;
+}
+
+@keyframes blinker {  
+  50% { opacity: 0.0; }
+}
