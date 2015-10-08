@@ -37,10 +37,6 @@
     min-width: 960px;
 }
 
-.datepicker {
-    float: right;
-}
-
 input[type="text"] {
   display: block;
   margin: 0;

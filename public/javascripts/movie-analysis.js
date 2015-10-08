@@ -10,7 +10,6 @@ $('input[name="date-range-tweets-per-day"]').datepicker({
   changeMonth: true,
   changeYear: true,
   showButtonPanel: true,
-  dateFormat: 'MM yy'
 }).focus(function() {
   var thisCalendar = $(this);
   $('.ui-datepicker-calendar').detach();
@@ -25,8 +24,7 @@ $('input[name="date-range-tweets-per-day"]').datepicker({
 $('input[name="date-range-tweets-over-time"]').datepicker({
   changeMonth: true,
   changeYear: true,
-  showButtonPanel: true,
-  dateFormat: 'MM yy'
+  showButtonPanel: true
 }).focus(function() {
   var thisCalendar = $(this);
   $('.ui-datepicker-calendar').detach();
@@ -34,7 +32,8 @@ $('input[name="date-range-tweets-over-time"]').datepicker({
     var month = parseInt($("#ui-datepicker-div .ui-datepicker-month :selected").val())+1;
     var year = $("#ui-datepicker-div .ui-datepicker-year :selected").val();
     thisCalendar.datepicker('setDate', new Date(year, month-1, 1));
-    getData('sentimentsandcountovertime', drawSentimentCountOverTime, month, year);
+    var state = $('.select-us-state option:selected').val();
+    getData('sentimentsandcountovertime', drawSentimentCountOverTime, month, year, state);
   });
 });
 
@@ -209,20 +208,27 @@ function drawBoxOfficeMap() {
 }
 
 function getBoxOfficeTitle(d) {
+  var title = 'No data available';
   var stateID = d.id.split("-")[1].toString();
-  var declineRate = stateBoxOffieData["declineRate"][stateID];
-  var name = stateBoxOffieData["name"][stateID];
-  return name + ": " + declineRate + "%";
+  if(stateBoxOffieData["declineRate"][stateID]) {
+    var declineRate = stateBoxOffieData["declineRate"][stateID];
+    var name = stateBoxOffieData["name"][stateID];
+    title =  name + ": " + declineRate + "%"
+  }
+  return title;
 }
 
 function onMouseOverBoxOfficeMap(d) {
   var nodeSelection = d3.select(this).style({opacity:'0.8'});
   //nodeSelection.select("text").style({opacity:'1.0'});
+  var display = '<h4>Tweet percentage left</h4><b>No data available</b>';
   var stateID = d.id.split("-")[1].toString();
-  var declineRate = stateBoxOffieData["declineRate"][stateID];
-  var name = stateBoxOffieData["name"][stateID];
-
-  d3.select(".map2 .info").html('<h4>Tweet percentage left</h4><b>' + name + ' : ' + declineRate + '%</b>');
+  if(stateBoxOffieData["declineRate"][stateID]) {
+    var declineRate = stateBoxOffieData["declineRate"][stateID];
+    var name = stateBoxOffieData["name"][stateID];
+    display = '<h4>Tweet percentage left</h4><b>' + name + ' : ' + declineRate + '%</b>';
+  }
+  d3.select(".map2 .info").html(display);
 }
 
 function onMouseOutBoxOfficeMap(d) {
@@ -242,7 +248,8 @@ function getBoxOfficeMapColor(d) {
          rate > 4.0   ? '#f9db57' :
          rate > 2.0   ? '#f8aa38' :
          rate > 1.0   ? '#f7614b' :
-                       '#F5361A';
+         rate >= 0.0   ? '#F5361A' :
+                       '#ccc';
 }
 
 function clicked(d) {
@@ -331,42 +338,72 @@ function fetchBoxOfficeJson(start, end) {
   return false;
 };
 
+function fetchUSstates() {
+  $.getJSON('/api/service/get/data/list/usstates',
+    function(result) {
+      var select = $('.select-us-state');
+      select.empty();
+      $.each(result.data, function(key, value) {
+        $(select)
+          .append($("<option></option>")
+          .attr("value",key)
+          .text(value)); 
+      });
+  });
+}
+
+$('.select-us-state').on('change', function() {
+  var date = $('input[name="date-range-tweets-over-time"]').datepicker("getDate");
+  getData('sentimentsandcountovertime', drawSentimentCountOverTime, $.datepicker.formatDate("m", date), $.datepicker.formatDate("yy", date), this.value);
+})
+
 function initialize() {
   //$.getJSON( '/login', function(response) {
     // if(response && response.success) {
-      getData('topstate', drawTopState);
+      getData('topmonth', drawGraphicsWithDatePicker);
       getData('topday', drawTopDay);
+      getData('topstate', drawTopState);
       getData('topcity', drawTopCity);
       getData('topsentiment', drawTopSentiment);
       getData('topthreelanguages', drawDonut);
       getData('tweetcountpergender', drawGenderChart);
       getData('tweetscountpersentiment', drawDonut);
-      getData('tweetsperday', drawDailyTweets);
       getData('tweetspermonth', drawDailyTweets);
-      getData('sentimentsandcountovertime', drawSentimentCountOverTime);
       getData('tweetscountpersentimentandlanguage', drawSentimentsPerLanugage);
+      fetchUSstates();
       fetchTweetsJson();
       fetchChartJson(); //chart.js
-      //fetchBoxOfficeJson();
+      fetchBoxOfficeJson();
     //} else {
       //console.log("Error: Login Failed");
     //}
   //});
 }
 
-function getData(service, callback, start, end) {
+function getData(service, callback, start, end, extra) {
   var start = typeof start !== 'undefined' ? start : moment().format('MM'),
       end = typeof end !== 'undefined' ? end : moment().format('YYYY');
 
   $.getJSON('/api/service/get/data/visualize/'+service, 
     {
       start: start,
-      end: end
+      end: end,
+      extra: extra
     },
     function(result) {
       callback(result.err, result.data, service)
   });
   return false;
+}
+
+function drawGraphicsWithDatePicker(err, data) {
+  if(!err && data) {
+    var date = new moment(data[0].DATE);
+    $('input[name="date-range-tweets-per-day"]').val(date.format('MM/DD/YYYY'));
+    getData('tweetsperday', drawDailyTweets, date.format('MM'), date.format('YYYY'), "ALL");
+    $('input[name="date-range-tweets-over-time"]').val(date.format('MM/DD/YYYY'));
+    getData('sentimentsandcountovertime', drawSentimentCountOverTime, date.format('MM'), date.format('YYYY'), "ALL");
+  }
 }
 
 function drawTopCity(err, data) {

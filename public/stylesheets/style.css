@@ -185,69 +185,94 @@ tweetscountpersentiment
   display: none;
 }
 
-#movieform {
-  width:100%;
-  height:auto;
-  position:relative;
-  margin:0 auto;
-  margin: 0 12%;
-}
-#leftform {
-  float: left;
+.left-half {
   background: #337AB7 none repeat scroll 0% 0%;
-  padding: 0px 28px 15px;
-  margin-right: 5px;
+  padding-right: 5px !important;
 }
-#rightform {
-  float:left;
-  padding:0 28px 15px;
-  position:relative;
+
+.left-form {
+  /*padding: 1px 20px 10px 10px;*/
+  padding: 1px 20px 0px 10px;
+}
+
+.left-form h2 {
+  color: #fff; 
+}
+
+.left-form .form-group {
+  padding-top: 15px;
+  padding-bottom: 10px; 
+}
+
+.right-half {
+  padding-left: 5px !important;
+  padding-right: 0px !important;
+}
+
+.right-form {
   background:#7C7C7C;
-  width: 45%;
+  padding: 1px 25px 0px 25px;
 }
+
+.right-form-left-field-group {
+  padding-right: 3px !important;
+}
+
+.right-form-right-field-group {
+  padding-left: 3px !important;
+}
+
+.right-form .form-group {
+  padding-top: 15px;
+  padding-bottom: 10px;
+}
+
+.right-form h2 {
+  color: #fff;
+}
+
+.right-form label {
+  color: #C4C4C4;
+}
+
+.right-form a {
+  float: right;
+  color: #C4C4C4;
+}
+
+.right-form a:hover {
+  color: yellow;
+  text-decoration: none;
+}
+
 #or {
   position:absolute;
-  left: -23px;
+  left: -19px;
   top: 10px;
   background:#fff;
-  width:40px;
+  width:41px;
   height:40px;
   text-align:center;
   border-radius:50%;
   font-weight:bold;
-  line-height:43px;
-  font-size: 15px;
+  line-height:42px;
+  font-size: 20px;
   color: #707070;
 }
-#movieform h1 {
-  text-align:left;
-  font-size:23px;
-  color: #fff;
-}
+
 #btn-visualize, #btn-insert-replace {
-  margin-left: 2px;
+  margin-left: 5px;
   float: right;
 }
 #btn-delete, #btn-retrieve {
   float: right;
 }
 .select-action, .search-action {
-  padding-top: 5px;
+  padding-bottom: 50px;
 }
 
-#select-movie-list, #search-field {
+.form-input-group {
   margin-top: 30px;
-}
-
-.search-movie {
-  width: 39% !important;
-  display: inline !important;
-  margin-right: 1%;
-}
-
-.search-twitter {
-  width: 60% !important;
-  display: inline !important;
 }
 
 /*DASHBOARD*/
@@ -259,7 +284,7 @@ tweetscountpersentiment
     transition: box-shadow 0.2s ease-in 0s;
 }
 .row {
-  padding: 0px 15px;
+  /*padding: 0px 15px;*/
 }
 .mini-box, .icon {
   border-radius: 0px !important;
@@ -272,9 +297,6 @@ tweetscountpersentiment
 }
 .mt0 {
   margin-top: 0px;
-}
-.text-primary {
-  color: #3F51B5;
 }
 .text-bold {
   font-weight: bold;
@@ -396,5 +418,45 @@ tweetscountpersentiment
 }
 
 .datapickerfield {
-  margin: 10px 20px 0 0 !important;
+  float: right;
+}
+
+/* Start by setting display:none to make this hidden.
+   Then we position it in relation to the viewport window
+   with position:fixed. Width, height, top and left speak
+   for themselves. Background we set to 80% white with
+   our animation centered, and no-repeating */
+.modal {
+    display:    none;
+    position:   fixed;
+    z-index:    1000;
+    top:        0;
+    left:       0;
+    height:     100%;
+    width:      100%;
+    background: rgba( 255, 255, 255, .8 ) 
+                url('..//images/Preloader_3.gif') 
+                50% 50% 
+                no-repeat;
+}
+
+/* When the body has the loading class, we turn
+   the scrollbar off with overflow:hidden */
+body.loading {
+    overflow: hidden;   
+}
+
+/* Anytime the body has the loading class, our
+   modal element will be visible */
+body.loading .modal {
+    display: block;
+}
+
+.gc-input-fields {
+  padding: 10px;
+}
+
+.select-us-state {
+  float: right;
+  width: 20% !important;
 }

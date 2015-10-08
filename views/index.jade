@@ -3,7 +3,7 @@ extends head
 append head
 	link(rel='stylesheet', href='/stylesheets/select2.css')
 block scripts
-	script(src='https://ajax.googleapis.com/ajax/libs/jquery/2.0.3/jquery.min.js')
+	script(src='http://ajax.googleapis.com/ajax/libs/jquery/2.0.3/jquery.min.js')
 	script(src='/javascripts/bootstrap-select.js')
 	script(src='/javascripts/index.js')
 
@@ -20,22 +20,32 @@ block content
 		else
 			.message
 		.featurette
-			#movieform
-				#leftform
-					h1 Select a movie from the list
-					select#select-movie-list.form-control
-					.select-action
-						input#btn-visualize.btn.btn-default(type="button" name="visualize" value="Analyze")
-						input#btn-delete.btn.btn-default(type="button" name="Delete" value="Delete")
-				#rightform
-					#or OR
-					h1 Load a movie data
-					#search-field
-						input.search-movie.form-control(type="search" name="movie-search" placeholder="Movie Title")
-						input.search-twitter.form-control(type="search" name="twitter-search" placeholder="Twitter Query")
-					.search-action
-						input#btn-insert-replace.btn.btn-default(type="submit" name="Replace" value="Insert/Replace")
-						input#btn-retrieve.btn.btn-default(type="submit" name="Retrieve" value="Retrieve")
+			.row
+				.col-lg-12
+					.col-lg-4.left-half
+						.left-form
+							h2 Select an existing movie
+							.form-group
+								select#select-movie-list.form-control
+							.select-action
+								input#btn-visualize.btn.btn-default(type="button" name="visualize" value="Analyze")
+								input#btn-delete.btn.btn-default(type="button" name="Delete" value="Delete")
+					.col-lg-8.right-half
+						.right-form
+							#or OR
+							h2 Load a new movie data and analyze
+							.row
+								.col-lg-4.right-form-left-field-group
+									.form-group
+										input.search-movie.form-control(type="search" name="movie-search" placeholder="Enter Movie Title")
+										a(href="http://www.the-numbers.com/daily-box-office-chart" target="_blank") See available movies
+								.col-lg-8.right-form-right-field-group
+									.form-group
+										input.search-twitter.form-control(type="search" name="twitter-search" placeholder="Optional: Additional Twitter Query Parameters")
+										a(href="https://www.ng.bluemix.net/docs/services/Twitter/index.html#query_lang" target="_blank") See query language manual
+							.search-action
+								input#btn-insert-replace.btn.btn-default(type="submit" name="Replace" value="Insert/Replace")
+								input#btn-retrieve.btn.btn-default(type="submit" name="Retrieve" value="Retrieve")
 		hr.featurette-divider
 		p.lead This report analyzes the actual box office success of the movie (available online from 
 			a(href="http://www.the-numbers.com/daily-box-office-chart") www.the-numbers.com/daily-box-office-chart
@@ -52,3 +62,4 @@ block content
 			.row
 				.col-lg-12
 					p Copyright &copy; IBM 2015
+		.modal

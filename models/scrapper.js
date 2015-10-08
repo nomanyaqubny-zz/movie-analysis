@@ -22,7 +22,7 @@ Scrapper.prototype = {
             if(err)
                 callback(err, result);
             else
-                callback(err, {message : 'success', name : movieName, performance : performance});
+                callback(err, {message : 'success', name : movieName.replace(/\'/g,"''"), performance : performance});
         });
 	},
     insert : function() {
@@ -64,7 +64,6 @@ function getBoxOfficeTabLink(callback) {
 }
 
 function retrieveContext(link, callback) {
-    console.log("retrieveContext");
     request(link, function(err, resp, body) {
         if(err)
             throw err;
@@ -88,8 +87,6 @@ function parseDailyBoxOfficeChart() {
 }
 
 function fetchDailyBoxOffiePerformance(url, callback) {
-    console.log("fetchDailyBoxOffiePerformance " + url);
-
     retrieveContext(url, function(err) {
         if(!err)
             var success = parseDailyBoxOfficePerformance();
@@ -98,7 +95,6 @@ function fetchDailyBoxOffiePerformance(url, callback) {
 }
 
 function parseDailyBoxOfficePerformance() {
-    console.log("parseDailyBoxOfficePerformance");
     var date, gross;
     $('#box-office').children('div#box_office_chart').eq(0).find('table tr').slice(1).each(function() {
         date = $(this).children('td').eq(0).find('a').text().replace(/\//g, '-');

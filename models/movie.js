@@ -48,6 +48,7 @@ Movie.prototype = {
 				}
 				movieList = movieList.slice(0,-1);
 				movieList += '}';
+				console.log(movieList)
 				result = { err : result.err, message: "success", data : JSON.parse(movieList)};
 			}
 			callback(result);
@@ -70,8 +71,11 @@ Movie.prototype = {
 				});
 		    },
 		    twitterInsights: function(callback) {
-		    	console.log('Getting Tweets Count for: ' + searchStringTwitter);
-		    	var twitterInsight = new TwitterInsight(searchStringTwitter);
+		    	var query = toHashtagCase(searchStringBoxOffice);
+		    	if(searchStringTwitter) query += " " + searchStringTwitter;
+		    	console.log('Getting Tweets Count for: ' + query);
+		    	
+		    	var twitterInsight = new TwitterInsight(query);
 				twitterInsight.count(function(err, data) {
 					// twitterInsight.print();
 					if(!err) {
@@ -81,41 +85,47 @@ Movie.prototype = {
 				});
 		    }
 		}, function(err, results) {
-			console.log(results)
 			if(err && results.theNumbers && !results.theNumbers.performance) results.message = results.theNumbers.message;
 			else if(err && results.twitterInsights && !results.twitterInsights.data) results.message = results.twitterInsights.message.description;
 		    callback(err, results);
 		});
 	},
-	insert: function(session, searchStringBoxOffice, searchStringTwitter, callback) {
-		if(session && session.theNumbers) {
-			console.log("Movie to insert: " + session.theNumbers.name)
+	insert: function(movieTitle, searchStringBoxOffice, searchStringTwitter, callback) {
+		if(movieTitle) {
 			//create a movie first
-			var tableName = this.getTableName(name);
+			var tableName = this.getTableName(movieTitle);
 			this.createMovie(function(err, result) {
 				if(!err) {
+					var movieID = result.data[0].ID;
 					async.parallel({
 						theNumbers: function(callback) {
 							// insert into database here : date and gross
-							db.executeQuery(getBoxOfficeInsertQuery(result.data[0].ID), function(err, result) {
-								callback(err, result.data[0].COUNT);
+							db.executeQuery(getBoxOfficeInsertQuery(movieID), function(err, result) {
+								result.data = result.data[0].COUNT;
+								callback(err, result);
 							});
 					    },
-					    tweets: function(callback) {
+					    twitterInsights: function(callback) {
+					    		var query = toHashtagCase(movieTitle);
+		    					if(searchStringTwitter) query += " " + searchStringTwitter;
+		    					console.log('Getting Tweets for: ' + query);
 					    		// insert into database here: name and tweets
-					    		var twitterInsight = new TwitterInsight(searchStringTwitter);
-								twitterInsight.insert(name, tableName, function(err, data) {
+					    		var twitterInsight = new TwitterInsight(query);
+								twitterInsight.insert(movieID, movieTitle, tableName, function(err, data) {
 									// twitterInsight.print();
-									tweetsCount = data.entries;
+									tweetsCount = data;
 									callback(err, data);
 								});
 					    }
 					}, function(err, results) {
-					    // results is now equals to: {one: 'abc\n', two: 'xyz\n'}
-					    console.log("Movie.js: asnyc result")
-					    console.log(results);
-					   	if(err && results.theNumbers && !results.theNumbers.performance) results.message = results.theNumbers.message;
-						else if(err && results.twitterInsights && !results.twitterInsights.data) results.message = results.twitterInsights.message.description;
+						console.log("insert callback")
+						console.log(results)
+					   	if(err && results.theNumbers && results.theNumbers.err) {
+					   		results.message = results.theNumbers.message;
+					   	}
+						else if (err && results.twitterInsights) {
+							results.message = results.twitterInsights.data.message.description;
+						}
 					    callback(err, results);
 					});
 				} else {
@@ -129,15 +139,15 @@ Movie.prototype = {
 	replace: function(session, searchStringBoxOffice, searchStringTwitter, callback) {
 		if(session && session.theNumbers) {
 			console.log("Movie to replace: " + session.theNumbers.name)
+			var movieTitle = session.theNumbers.name;
 			var self = this;
-			this.delete(name, function(err, data) {
+			this.delete(movieTitle, function(err, data) {
 				if(!err) {
-					self.insert(session, searchStringBoxOffice, searchStringTwitter, function(err, data) {
-						console.log("movie.js: replace: callback result")
+					self.insert(movieTitle, searchStringBoxOffice, searchStringTwitter, function(err, data) {
 						callback(err, data);
 					});
 				} else {
-					data.message="An error occured"
+					data.message="An error occured while deleting the movie"
 					callback(err, data)
 				}
 			});
@@ -153,6 +163,11 @@ Movie.prototype = {
 	}
 }
 
+function toHashtagCase(str) {
+    str = str.replace(/\w\S*/g, function(txt){return txt.charAt(0).toUpperCase() + txt.substr(1).toLowerCase();});
+    return '#'+str.replace(/[^a-z\d]/gi, '');
+}
+
 function getBoxOfficeInsertQuery(movieID) {
 	var query = "SELECT COUNT(ID) COUNT FROM FINAL TABLE (INSERT INTO BOX_OFFICE (MOVIE_ID, DATE, GROSS) VALUES "
 	for (var i = 0; i < gross.length; i++) {
@@ -165,6 +180,7 @@ function deleteMovieContent(movieName, callback) {
 	if(movieName === null) movieName = name;
 	var query = "SELECT ID FROM MOVIE WHERE NAME='"+movieName+"'";
 	var tableName = generateTableName(movieName);
+	console.log(query)
 	db.executeQuery(query, function(err, result) {
 		if(!err) {
 			if(result.data.length > 0) {
@@ -196,6 +212,12 @@ function deleteAll(movieID, tableName, callback) {
 		deleteMovieBoxOfficeContent: function(callback) {
 			var queryBO = "DELETE FROM BOX_OFFICE WHERE MOVIE_ID="+movieID;
 			db.executeQuery(queryBO, function(err, result) {
+				callback(err, result);
+			});
+	    },
+	    deleteMovieDeclineRate: function(callback) {
+			var queryDR = "DELETE FROM TWEET_ALERTS WHERE MOVIE_ID="+movieID;
+			db.executeQuery(queryDR, function(err, result) {
 				callback(err, result);
 			});
 	    },

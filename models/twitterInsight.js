@@ -7,8 +7,8 @@ var async = require('async'),
     config = require('nconf'),
     version = 'api:' + config.get("api:version");
 
-//var pool = new http.Agent;
-//    pool.maxSockets = 500;
+// var pool = new http.Agent;
+//     pool.maxSockets = 100;
 
 var query, 
     count, 
@@ -16,6 +16,7 @@ var query,
     MAX_TWEETS, 
     insightHOST, 
     schemaTweetMap,
+    dashDB,
     progress;
 
 function TwitterInsight(searchString) {
@@ -27,7 +28,7 @@ function TwitterInsight(searchString) {
 
     var services = JSON.parse(process.env.VCAP_SERVICES || "{}");
     insightHOST = services["twitterinsights"] ? services["twitterinsights"][0].credentials.url : config.get(version + ':twitterInsights').url;
-    console.log("twitterInsihgt.js: insighthost = " + insightHOST)
+    dashDB = services["dashDB"] ? services["dashDB"][0].credentials : config.get(version + ':dashDB');
 }
 
 TwitterInsight.prototype = {
@@ -56,7 +57,7 @@ TwitterInsight.prototype = {
             callback(err, count);
         });
 	},
-    insert: function(movieName, tableName, callback) {
+    insert: function(movieID, movieName, tableName, callback) {
         //check if there is already an ajax running
         if(progress == 0) {
             //create a table with the movie name to store tweets
@@ -68,38 +69,35 @@ TwitterInsight.prototype = {
                     //Twitter for Insight provides at max 500 tweets per request
                     //call the retrieve and insert function total number of tweets / max tweets per request
                     var times =  Math.ceil(count / MAX_TWEETS);
-                    async.timesLimit(times, 5, function(n, next) {
+                    async.timesLimit(times, 25, function(n, next) {
                         retrieveInsight(url, query, function(err, data) {
                             if (!err && data['tweets'].length > 0) {
-                                insertTweets(db, tableName, data['tweets'], function(err, message, rows) {
+                                insertTweets(db, tableName, data['tweets'], function(err, result, rows) {
                                     if(!err) {
                                         progress += rows;
                                         process.stdout.write("\rso far: " + progress);
                                     }
-                                    next(err, null);
+                                    next(err, result);
                                 });
-                            } else if (err === true) {
-                            	console.log("twitterInsight.js: retrieveInsight callback else if")
-                           		console.log(data);
-                              	next(err, data);
-                           	} else {
-								console.log("twitterInsight.js: retrieveInsight callback else")
-                           		console.log(err);
-                           	}
-                           	
-                           	
-                           	//TEST LNES HERE
-                           	//progress += data['tweets'].length;
-                            //process.stdout.write("\rso far: " + progress);
-                            //next(err, null);
-                            
+                            } else if (err && !data) {
+                                console.log(err)
+                            } else {
+                                next(err, data)
+                            }
                         }, (n*MAX_TWEETS));
-                    }, function(err, data) {
-                        callback(err, {entries: progress, data: data});
+                    }, function (err, data) {
+                        data = getData(data);
+                        if(!err) {
+                            calculateDeclineRate(movieID, tableName, function(err, result) {
+                                data.declineRate = result;
+                                callback(err, {count: progress, data: data});
+                            });
+                        } else {
+                            callback(err, {count: progress, data: data});
+                        }
                     });
                 } else {
-                	console.log("twitterInsight.js: createMovieTable callback")
-                    callback(err, progress);
+                    callback(err, {count: progress, data: data});
                 }
             });
         }
@@ -116,6 +114,44 @@ TwitterInsight.prototype = {
     }
 }
 
+function calculateDeclineRate(movieID, tableName, callback) {
+    var command = "library(ibmdbR)\ncon <- idaConnect(\"BLUDB\",\"\",\"\")\nidaInit(con)\ntweetCountsPerState <- idaQuery(\"SELECT SMAAUTHORSTATE AS STATE, DATE(MSGPOSTEDTIME) AS DATE, COUNT(*) AS CNT FROM "+tableName+" a INNER JOIN US_STATES b ON a.SMAAUTHORSTATE=b.STATE WHERE DATE(MSGPOSTEDTIME)>'2015-01-15' GROUP BY SMAAUTHORSTATE,DATE(MSGPOSTEDTIME) ORDER BY DATE\")\n#Calculate the decline of tweets between opening weekend and now\ntweetCountsPerState$CNT <- as.numeric(tweetCountsPerState$CNT)\ntweetCountsPerState <- na.omit(tweetCountsPerState)\nx <- by(tweetCountsPerState,tweetCountsPerState$STATE,function(df){df[nrow(df),\"CNT\"]/df[1,\"CNT\"]}, simplify=F)\nresult <- data.frame(MOVIE_ID="+movieID+",STATE_ISO=names(x),DECLINE_RATE=as.numeric(as.vector(x)))\n#Write this to a db table\nsqlSave(con, result, tablename = \"TWEET_ALERTS\", append = TRUE, rownames = FALSE)";    
+    console.log(command);
+
+    request({
+        method: "POST",
+        url: dashDB.https_url + "/console/blushiftservices/BluShiftHttp.do",
+        qs: {
+            'profileName' : dashDB.db,
+            'userid' : dashDB.username,
+            'cmd' : 'RScriptRunScript',
+            'command' : command
+        },
+        auth: {
+            'user': dashDB.username,
+            'pass': dashDB.password
+        },
+        headers: {
+            'Content-Type': 'application/x-www-form-urlencoded'
+        }
+    }, function(err, response, data) {
+        console.log("calculateDeclineRate callback")
+        console.log(err)
+        console.log(data)
+        callback(err, data);
+    });
+}
+
+function getData(data) {
+    console.log(data)
+    if(data.length > 1) {
+        for (var i = 0; i < data.length; i++) {
+            if(data[i] !== null && typeof data[i] === 'object') {
+                return data[i];
+            }
+        };
+    } 
+}
 function retrieveInsight(url, query, callback, from) {
     var params = null;
     //send query parameters as below in order to handle special characters in values such as '#'
@@ -130,24 +166,19 @@ function retrieveInsight(url, query, callback, from) {
         method: "GET",
         url: url,
         qs: params,
-//        pool: pool,
-        // auth: {
-        //     'user': 'f6204541d9434de8a1363a9214fe5455',
-        //     'pass': 'oUzn5yaGuq'
-        // },
+        // pool: pool,
         headers: {
             'Content-Type': 'application/json;charset=utf-8'
         }
     }, function(err, response, data) {
         if (err) {
-            console.log("ERR")
             callback(err);
         } else {
             if (response.statusCode == 200) {
                 try {
                     callback(null, JSON.parse(data));
                 } catch(e) {
-                    callback(true, { 
+                    callback(true, {
                         message: { 
                             description: e.message
                         },
@@ -223,11 +254,12 @@ function insertTweets(db, tableName, tweets, callback) {
         insertQuery = insertQuery.slice(0,-1);
         database.executeQuery(insertQuery, function(err, result) {
             if( !err ) {
-                console.log("db insert: success")
-                callback(err, result.message + " IN TWEETS INSERTION.", i);
+                // console.log("db insert: success")
+                result.message = result.message + " IN TWEETS INSERTION";
+                callback(err, result, i);
             } else {
-                console.log(insertQuery)
-                console.log(result)
+                // console.log(insertQuery)
+                // console.log(result)
                 console.log("db insert: failure")
                 result.message = result.message + " IN TWEETS INSERTION.";
                 callback(err, result, i);
@@ -236,7 +268,7 @@ function insertTweets(db, tableName, tweets, callback) {
         });
     } catch(e) {
         console.log('catch')
-        console.log(insertQuery)
+        // console.log(insertQuery)
         console.log(result)
         console.log(e)
         callback(true, e)

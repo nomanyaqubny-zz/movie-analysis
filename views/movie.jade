@@ -4,9 +4,9 @@ append head
 	link(rel='stylesheet', href='https://cdn.jsdelivr.net/bootstrap.daterangepicker/2/daterangepicker.css')
 
 block scripts
-	script(src='https://ajax.googleapis.com/ajax/libs/jquery/2.0.3/jquery.min.js')
-	script(src='https://code.jquery.com/ui/1.11.4/jquery-ui.js')
-	script(src="https://d3js.org/d3.v3.min.js")
+	script(src='http://ajax.googleapis.com/ajax/libs/jquery/2.0.3/jquery.min.js')
+	script(src='http://code.jquery.com/ui/1.11.4/jquery-ui.js')
+	script(src="http://d3js.org/d3.v3.min.js")
 	script(src='/javascripts/d3.min.js')
 	script(src='/javascripts/topojson.min.js')
 	script(type="text/javascript" src="/javascripts/bootstrap.min.js")
@@ -31,17 +31,17 @@ block content
 					.row
 						.col-md-3.col-sm-6
 							.panel.panel-default.mb20.mini-box.panel-hovered
-								.panel-body
+								.panel-body(style="height:85px;")
 									.clearfix
 										.top-day.left
-											h4.mto.text-primary.text-bold
-											h5.text-light.mb0
+											h4.mto.text-primary.text-bold 2015-07-17
+											h5.text-light.mb0 with 10680 Tweets
 										.right.icon-day
 								.panel-footer.clearfix.panel-footer-sm.panel-footer-primary
 									p.mt0.mb0.left Top Day
 						.col-md-3.col-sm-6
 							.panel.panel-default.mb20.mini-box.panel-hovered
-								.panel-body
+								.panel-body(style="height:85px;")
 									.clearfix
 										.top-state.left
 											h4.mto.text-primary.text-bold
@@ -51,7 +51,7 @@ block content
 									p.mt0.mb0.left Top State
 						.col-md-3.col-sm-6
 							.panel.panel-default.mb20.mini-box.panel-hovered
-								.panel-body
+								.panel-body(style="height:85px;")
 									.clearfix
 										.top-city.left
 											h4.mto.text-primary.text-bold
@@ -61,7 +61,7 @@ block content
 									p.mt0.mb0.left Top City
 						.col-md-3.col-sm-6
 							.panel.panel-default.mb20.mini-box.panel-hovered
-								.panel-body
+								.panel-body(style="height:85px;")
 									.clearfix
 										.top-sentiment.left
 											h4.mto.text-primary.text-bold
@@ -72,49 +72,56 @@ block content
 				.bars-and-charts
 					.row
 						.col-md-4.col-sm-6
-							.panel.panel-default.mb20.panel-hovered
+							.panel.panel-default.mb20.panel-hovered(style="height:380px;")
 								.panel-heading TOP LANGUAGES
 								.panel-body.text-center.top-languages.donut
 						.col-md-4.col-sm-6
-							.panel.panel-default.mb20.panel-hovered
+							.panel.panel-default.mb20.panel-hovered(style="height:380px;")
 								.panel-heading TOP SENTIMENTS
 								.panel-body.text-center.top-sentiments.donut
 						.col-md-4.col-sm-6
-							.panel.panel-default.mb20.panel-hovered
+							.panel.panel-default.mb20.panel-hovered(style="height:380px;")
 								.panel-heading GENDER TWEETS COUNT
 								.panel-body.text-center.gender-tweets-count
 					.row
 						.col-xs-12
-							.panel.panel-default.mb20.panel-hovered
-								.panel-heading Tweets Count Per Day
-								input.datepicker.form-control.datapickerfield(type="text", name="date-range-tweets-per-day", data-time-picker="true", value= 'September 2015')
-								.panel-body.text-center.day-tweets-count
-					.row
-						.col-xs-12
-							.panel.panel-default.mb20.panel-hovered
+							p First lets take a quick look at the tweets volumes by sentiments happened over the months. The first bar represents the sentiments expressed when #{title} trailer was released to the public. Later on, the public sentiments can be seen in when #{title} hits the theaters in month represented by the highest bar followed by the post-release drop in tweets.
+							.panel.panel-default.mb20.panel-hovered(style="height:590px;")
 								.panel-heading Tweets Count Per Month
 								.panel-body.text-center.monthly-tweets-count
 					.row
 						.col-xs-12
-							.panel.panel-default.mb20.panel-hovered
+							p This detailed trend chart of daily tweet volume depicts the story of #{title} nicely by breaking down the tweets per sentiments over day. We can see the rise and fall in bars over weekends but overall trend remains the same.
+							.panel.panel-default.mb20.panel-hovered(style="height:590px;")
+								.panel-heading Tweets Count Per Day
+								.gc-input-fields
+									input.datepicker.form-control.datapickerfield(type="text", name="date-range-tweets-per-day", data-time-picker="true", value= 'September 2015')
+								.panel-body.text-center.day-tweets-count
+					.row
+						.col-xs-12
+							p Following chart highlights How the tweet sentiments varied over time? We can notice amount of negative or positive sentiments expressed about the #{title} pre-release and how they plunged after the release. It also indicates that a similar drop or rise in sentiment might occur in the post-release.
+							.panel.panel-default.mb20.panel-hovered(style="height:590px;")
 								.panel-heading Tweets Count Per Sentiment Over Time
-								input.datepicker.form-control.datapickerfield(type="text", name="date-range-tweets-over-time", data-time-picker="true", value= 'September 2015')
+								.form-group.gc-input-fields
+									input.datepicker.form-control.datapickerfield(type="text", name="date-range-tweets-over-time", data-time-picker="true", value= 'September 2015')
+									select.select-us-state.form-control
 								.panel-body.text-center.sentiments-tweets-count-over-time
 					.row
 						.col-xs-12
-							.panel.panel-default.mb20.panel-hovered
+							p Further on by breaking down the sentiments expressed across languages based on Author's language, we can have a look into who did or did not like #{title}.
+							.panel.panel-default.mb20.panel-hovered(style="height:590px;")
 								.panel-heading Tweets Count Per Sentiment and Language
 								.panel-body.text-center.sentiments-tweets-count-per-lanugage
-
 	.container
 		hr.featurette-divider
 		.featurette
-			h2.featurette-heading Tweet volume for "#{title}" per state since movie start on 2015-01-15
+			h2.featurette-heading Tweet volume for "#{title}" per state since movie start
 			p.lead In this map we can see the absolute 
 				b public interest in "#{title}" expressed through tweets 
 				| broken down by US state. Please note that the numbers are an extrapolation based on a 10% sample of all tweets.
 			.map.map1.leaflet-container
-				input.datepicker.form-control.datapickerfield(type="text", name="date-range-map1", data-time-picker="true", value= '01-01-2015 till Today')
+				.gc-input-fields
+					input.datepicker.form-control.datapickerfield(type="text", name="date-range-map1", data-time-picker="true", value= '01-01-2015 till Today')
 				.leaflet-control-container
 					.leaflet-top.leaflet-right
 						.info.leaflet-control
@@ -150,12 +157,13 @@ block content
 		.featurette
 			h2.featurette-heading Dependency between actual box office success and tweet volume
 			p.lead This diagram highlights how the actual box office success of the movie correlates with the general tweet volume trend over time. Even though there are the spikes for box office numbers on weekends, the general trend correlates with the decline of tweet volume after movie launch.
-			input.datepicker.form-control.datapickerfield(type="text", name="date-range-chart", data-time-picker="true", value= '01-01-2015 till Today')
+			.gc-input-fields
+				input.datepicker.form-control.datapickerfield(type="text", name="date-range-chart", data-time-picker="true", value= '01-01-2015 till Today')
 			.chart
 		
 		hr.featurette-divider
 		.featurette
-			h2.featurette-heading Relative decline of tweet volume per state since movie start on 2015-01-15
+			h2.featurette-heading Relative decline of tweet volume per state since movie start
 			p.lead This map highlights the states that have the most significant decline of tweet volume since movie start. The number per state represents the 
 				b percentage of tweets today compared to the number of tweets on the day the movie started 
 				| in the state.

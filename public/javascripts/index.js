@@ -1,3 +1,9 @@
+$body = $("body");
+$(document).on({
+    ajaxStart: function() { $body.addClass("loading");    },
+    ajaxStop: function() { $body.removeClass("loading"); }    
+});
+
 $(document).ready(function() { 
   init();
 });
@@ -38,7 +44,7 @@ $('#btn-visualize').click(function() {
 $('#btn-retrieve').click(function() {
   var searchMovieString = $(".search-movie").val();
   var searchTwitterString = $(".search-twitter").val();
-  if (searchMovieString && searchTwitterString) {
+  if (searchMovieString) {
     loadMovieData(searchMovieString, searchTwitterString);
   } else {
     $('.search-movie').addClass('warning');
@@ -47,16 +53,18 @@ $('#btn-retrieve').click(function() {
 });
 
 function loadMovieData(movieTitle, twitterQuery) {
-  $.getJSON('/movie/load/search', 
-    {
+  $.ajax({
+    url : '/movie/load/search',
+    async : false,
+    data : {
       boxOffice: movieTitle,
       twitter: twitterQuery
-    }, 
-    function(result) {
+    },
+    success: function(result) {
       console.log(result)
       if(!result.err && result.data) {
-        $('.message').append('<div class="message-box message-success">Title: ' + result.data.theNumbers.name +  ', Box Office Entries : ' + result.data.theNumbers.performance.length
-         + ', Tweets Count: ' + result.data.twitterInsights.count + '</div>');
+        $('.message').append('<div class="message-box message-success">Title: ' + (result.data.theNumbers ? result.data.theNumbers.name : "null") +  ', Box Office Entries : ' + result.data.theNumbers.performance.length
+         + ', Tweets Count: ' + (result.data.twitterInsights ? result.data.twitterInsights.count : "null") + '</div>');
       } else {
         $('.message').append('<div class="message-box message-err">'+result.data.message+'</div>');
       }
@@ -64,15 +72,15 @@ function loadMovieData(movieTitle, twitterQuery) {
       $('.search-twitter').removeClass('warning');
       $('.message-box').fadeOut(100000, 'linear');
     }
-  );
+  });
   return false;
 }
 
 function insertReplaceMovieDataCallback(result) {
   if(!result.err && result.data) {
     getAllMovies();
-    $('.message').append('<div class="message-box message-success">Tweets Count: ' + result.data.tweets +
-      ' Box Office Entries : ' + result.data.theNumbers + '</div>');
+    $('.message').append('<div class="message-box message-success">Tweets Count: ' + result.data.twitterInsights.count +
+      ' Box Office Entries : ' + result.data.theNumbers.data + '</div>');
   } else {
     $('.message').append('<div class="message-box message-err">'+result.data.message+'</div>');
     $('.message-box').fadeOut(100000, 'linear');
@@ -84,14 +92,15 @@ function insertReplaceMovieDataCallback(result) {
 $('#btn-insert-replace').click(function(e) {
   var movieTitle = $(".search-movie").val();
   var twitterQuery = $(".search-twitter").val();
-  if(movieTitle && twitterQuery) {
+  if(movieTitle) {
     $.ajax({
       type: 'GET',
-      url: '/movie/replace',
+      url: '/movie/replace/query',
       data: {
         boxOffice: movieTitle,
         twitter: twitterQuery
       },
+      async: false,
       dataType: 'json',
       success: insertReplaceMovieDataCallback,
       error: function(x, t, m) {
@@ -103,7 +112,7 @@ $('#btn-insert-replace').click(function(e) {
             console.log(m);
         }
       },
-      timeout: 600000 //60 minutes
+      timeout: 360000000 //60 minutes
       // progress: function(evt) {
       //     if (evt.lengthComputable) {
       //         console.log("Loaded " + parseInt( (evt.loaded / evt.total * 100), 10) + "%");

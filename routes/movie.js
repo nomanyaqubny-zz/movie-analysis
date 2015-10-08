@@ -1,5 +1,4 @@
 var express = require('express'),
-	timeout = require('connect-timeout'),
 	router = express.Router(),
 	Movie = require('../models/movie');
 
@@ -58,7 +57,6 @@ router.get('/load/:search', function(req, res, next) {
 router.param('query', function(req, res, next, query) {
 	//default request timeout is 2 minutes
 	res.setTimeout(600000);
-	//req.setTimeout(3600000);
 	var sessionRetrieve = (typeof req.session.retrieve === "undefined") ? null : req.session.retrieve;
 	if(req.url.indexOf("insert")>-1) {
 		movie.insert(sessionRetrieve, query, function(err, data) {
@@ -68,7 +66,7 @@ router.param('query', function(req, res, next, query) {
 			return next();
 		});
 	} else if(req.url.indexOf("delete")>-1) {
-		movie.delete(query, function(err, data) {
+		movie.delete(query.replace(/\'/g,"''"), function(err, data) {
 			req.err = err;
 			req.data = data;
 			return next();
@@ -83,28 +81,18 @@ router.param('query', function(req, res, next, query) {
 	}
 });
 
-router.get('/replace', function(req, res) {
-	var sessionRetrieve = (typeof req.session.retrieve === "undefined") ? null : req.session.retrieve;
-	movie.replace(sessionRetrieve, req.query.boxOffice, req.query.twitter, function(err, data) {
-		console.log("Routes movie.js: replace callback")
-		console.log(err)
-		console.log(data)
-		console.log(res)
-		console.log(req)
-		if (err) {
-			res.json({
-				err : true,
-				data: data
-			});
-		} else {
-			res.json({
-				err : null,
-				data: data
-			});
-		}
-		console.log("DEL")
-		delete req.session.retrieve;
-	});
+router.get('/replace/:query', function(req, res, next) {
+	if (req.err) {
+		res.json({
+			err : true,
+			data: req.data
+		});
+	} else {
+		res.json({
+			err : null,
+			data: req.data
+		});
+	}
 });
 
 router.get('/insert/:query', function(req, res, next) {
