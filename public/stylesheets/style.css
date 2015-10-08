@@ -349,7 +349,7 @@ tweetscountpersentiment
    content:url(../images/mfl_icon_house_38.png);
 }
 .icon-sentiment:before {
-   content:url(../images/troll_icons_2_28891_7697_thumb.png);
+   content:url(../images/people-icon-38.png);
 }
 
 
@@ -467,4 +467,29 @@ body.loading .modal {
 
 @keyframes blinker {  
   50% { opacity: 0.0; }
+}
+
+.home-icon img{
+  width: 105%;
+}
+
+.scroll-top img {
+  width: 75%;
+}
+
+.home-icon {
+  position: fixed;
+  width: 5%;
+  z-index: 9999;
+  padding: 10px;
+}
+
+.scroll-top {
+  padding-top: 70px;
+  position: fixed;
+  width: 5%;
+  z-index: 9999;
+  padding: 10px;
+  bottom: 0px;
+  right: 0px;
 }

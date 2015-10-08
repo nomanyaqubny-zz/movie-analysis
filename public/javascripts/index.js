@@ -37,6 +37,7 @@ function appendOptions(selectValues) {
 }
 
 $('#btn-visualize').click(function() {
+  $('#btn-visualize').removeClass('blinkMe');
   var url = "movie/box-office/" + $('#select-movie-list option:selected').val();
   window.location.href = url;
 });

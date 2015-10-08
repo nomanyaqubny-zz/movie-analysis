@@ -21,7 +21,7 @@ Movie.prototype = {
 	getName: function(id, callback) {
 		var query = "SELECT NAME FROM MOVIE WHERE ID=" + id;
 		db.executeQuery(query, function(err, result) {
-			if (!result.data) callback(null);
+			if (!result.data || result.data.length < 1) callback(null);
 			else callback(result.data[0].NAME);
 		});
 	},
