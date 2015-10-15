@@ -2,46 +2,21 @@
 	"api" : {
 		"description" : "API defines the version to use either REST(v1) or dashDB(v2) as a service",
 		"version" : "v2",
-		"v1" : {
-			"description" : "The api version v1 uses REST services deployed on server defined below.",
-			"restAPI" : {
-				"username" : "bluadmin",
-				"password" : "ZGRiNTllMTJmYzFh",
-				"hostname" : "https://9.39.221.94:8443",
-				"login" : {
-					"uri" : "/services/loginService",
-					"data": {
-						"j_username" : "bluadmin",
-						"j_password" : "ZGRiNTllMTJmYzFh"
-					}
-				},
-				"service" : {
-					"uri" : "/jobmanager/ResultSetDataProvider.form",
-					"RSBufferingType" : "FLAT_ROWS",
-					"cmd" : "getAllRows",
-					"dbProfileName" : "BLUDB"
-				},
-				"params" : {
-					"insecure" : true,
-					"cookie" : "/tmp/cks.dat"
-				}
-			}	
-		},
 		"v2" : {
 			"description" : "The api version v3 use dashDB as a service via vcap environmental variables. In case, if there is no service attached with the application, it used following connection variables",
 			"dashDB" : {
 				"db" : "BLUDB",
-				"hostname" : "yp-dashdb-small-01-lon02.services.eu-gb.bluemix.net",
+				"hostname" : "<host>",
 				"port" : 50000,
-				"username" : "dash1046581",
-				"password" : "PxtZmj4pI1kC"
+				"username" : "<user>",
+				"password" : "<pw>"
 			},
 			"twitterInsights" : {
-				"username": "8d53de89-d27e-4e6c-a67f-92033c8c3bab",
-		        "password": "tMPpwd5T81",
+				"username": "<user>",
+		        "password": "<pw>",
 		        "host": "cdeservice.mybluemix.net",
 		        "port": 443,
-		        "url": "https://8d53de89-d27e-4e6c-a67f-92033c8c3bab:tMPpwd5T812@cdeservice.mybluemix.net"
+		        "url": "https://<user>:<pw>@cdeservice.mybluemix.net"
 			}
 		}
 	},
