@@ -89,7 +89,7 @@ router.param('query', function(req, res, next, query) {
 		res.setTimeout(600000);
 		var retrievedMovie = (typeof req.session.movie === "undefined") ? null : req.session.movie;
 
-		if(retrievedMovie) {
+		if(retrievedMovie && retrievedMovie.tweetsCount <= 50000) {
 			var movie = new Movie(retrievedMovie.name, retrievedMovie.boxOfficeNumbers, retrievedMovie.tweetsCount, retrievedMovie.twitterQuery);
 
 			movie.replace(req.query.boxOffice, req.query.twitter, function(err, data) {
@@ -98,6 +98,10 @@ router.param('query', function(req, res, next, query) {
 				delete req.session.movie;
 				return next();
 			});
+		} else if (retrievedMovie && retrievedMovie.tweetsCount > 50000) {
+			req.err = true;
+			req.data = {message:"Tweets exceed the upper limit of 50000 to be fetched for a movie. Use additional twitter query parameters to filter tweets. Hint: add one or more hashtags, use posted:startTime or/and followers_count:lowerLimit or refer to manual"};
+			return next();
 		} else {
 			req.err = true;
 			req.data = {message:"Retrieve Movie Data First"};
