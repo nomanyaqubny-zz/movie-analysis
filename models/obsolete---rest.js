@@ -1,3 +1,13 @@
+/**********************************
+
+OBSOLETE
+
+Require this model in route service.js if you wish to fetch data from an external server
+instead of calling dashDB API. And rename this file to rest.js instead of obsolete---rest.js
+
+***********************************/
+
+
 var curl = require('curlrequest'),
 	xml2js = require('xml2js');
 

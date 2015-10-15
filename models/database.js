@@ -1,5 +1,19 @@
 "use strict";
 
+/**********************************
+
+This model js file is responsible for interaction with dashDB
+
+It either uses VCAP_SERVICES if there is any attached or it would fetch credentials from config.json
+
+Responsible for: 
+	1. Initializing defaults table into an empty database
+	2. Execute query
+	3. Get name of existing tables
+	4. Check if table exists 
+
+***********************************/
+
 var ibmdb = require('ibm_db');
 var config = require('nconf');
 var version = 'api:' + config.get("api:version");
@@ -21,6 +35,10 @@ var connString = "DRIVER={DB2};DATABASE=" + dashDB.db
 
 var USStatesValues = [];
 
+
+/*
+define here the definitions of applications default tables
+*/
 var createMovieTable = 'CREATE TABLE MOVIE ('
 + 'ID INT NOT NULL GENERATED ALWAYS AS IDENTITY (START WITH 1, INCREMENT BY 1),'
 + 'NAME VARCHAR(128) NOT NULL,'
@@ -44,6 +62,9 @@ var createUSSatesTable = 'CREATE TABLE US_STATES ('
 + 'STATE_ISO VARCHAR(128)'
 + ');';
 
+/*
+to populate table US_STATES with ISO and name of the states
+*/
 var insertUSStates = "INSERT INTO US_STATES (STATE_ISO, STATE) VALUES "
 	+"('AL', 'Alabama'),"
 	+"('AK', 'Alaska'),"
@@ -121,6 +142,11 @@ Database.prototype = {
 	info: function() {
 		console.log(connString);
 	},
+	/*
+	function to execute query in dashDB
+	it requires ibmdb module to open a connection first using connection string as defined above 
+	and execute query and get back the result and err if any
+	*/
 	executeQuery: function(query, callback) {
 		var result = { err : true, message: null, data : null};
 		if ( !query ) {
@@ -159,6 +185,11 @@ Database.prototype = {
 	    	callback(err, result);
 		});
 	},
+	/*
+	function to execute query in dashDB
+	it requires ibmdb module to open a connection first using connection string as defined above 
+	and execute query and get back the result and err if any
+	*/
 	checkTableExist: function(name, callback) {
 		console.log("checkTableExist");
 		var query = "SELECT TABNAME FROM SYSCAT.TABLES WHERE TABSCHEMA=CURRENT_SCHEMA ORDER BY TABNAME";
@@ -175,7 +206,11 @@ Database.prototype = {
 			callback(found);
 		});
 	},
+	/*
+	function to intialize the database with the defaults tables required by the application
+	*/
 	initialize: function(callback) {
+		//store the context of class for later calls in callback
 		var self = this;
 		this.getExistingTables(function(err, result) {
 			if (err) {

@@ -22,4 +22,14 @@ router.get('/api/env/var', function(req, res, next) {
 	});
 });
 
+router.get('/api/rscript', function(req, res, next) {
+	var testModel = new TestModel();
+	testModel.getRScript(function(err, data) {
+		res.json({
+			err : err,
+			data: data
+		});
+	});
+});
+
 module.exports = router;

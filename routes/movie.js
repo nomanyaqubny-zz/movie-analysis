@@ -1,11 +1,27 @@
+/********************************************
+Router movie.js is reponsible for all the requests to 
+	1. get(All)
+	2. fetch
+	3. insert
+	4. replace
+	5. delete
+movie(s) from database. 
+
+it requires 
+	1. Express Router module
+	2. Model movie.js file to perform operation on movie data
+
+Author: Noman Yaqub
+*********************************************/
+
 var express = require('express'),
 	router = express.Router(),
 	Movie = require('../models/movie');
 
-var movie = new Movie();
-
 router.param('id', function(req, res, next, id) {
-	req.movieName = movie.getName(id, function(result) {
+	var movie = new Movie();
+
+	movie.getName(id, function(result) {
 		if(result) {
 			var tableName = movie.getTableName(result);
 			req.session.movieId = id;
@@ -26,15 +42,20 @@ router.get('/box-office/:id/:movie', function(req, res) {
 
 /* movie service */
 router.get('/get/all', function(req, res, next) {
+	var movie = new Movie();
+
 	movie.getAll(function(result) {
 		res.send(result);
 	});
 });
 
 router.param('search', function(req, res, next, search) {
+	var movie = new Movie();
+
 	movie.loadAll(req.query.boxOffice, req.query.twitter, function(err, data){
 		req.err = err;
 		req.data = data;
+		req.session.movie = movie;
 		return next();
 	});
 });
@@ -46,7 +67,6 @@ router.get('/load/:search', function(req, res, next) {
 			data: req.data
 		});
 	} else {
-		req.session.retrieve = req.data;
 		res.json({
 			err : null,
 			data: req.data
@@ -55,29 +75,34 @@ router.get('/load/:search', function(req, res, next) {
 });
 
 router.param('query', function(req, res, next, query) {
-	//default request timeout is 2 minutes
-	res.setTimeout(600000);
-	var sessionRetrieve = (typeof req.session.retrieve === "undefined") ? null : req.session.retrieve;
-	if(req.url.indexOf("insert")>-1) {
-		movie.insert(sessionRetrieve, query, function(err, data) {
-			req.err = err;
-			req.data = data;
-			delete req.session.retrieve;
-			return next();
-		});
-	} else if(req.url.indexOf("delete")>-1) {
+		
+	if(req.url.indexOf("delete")>-1) {
+		var movie = new Movie();
+
 		movie.delete(query.replace(/\'/g,"''"), function(err, data) {
 			req.err = err;
 			req.data = data;
 			return next();
 		});
 	} else {
-		movie.replace(sessionRetrieve, req.query.boxOffice, req.query.twitter, function(err, data) {
-			req.err = err;
-			req.data = data;
-			delete req.session.retrieve;
+		//default request timeout is 2 minutes
+		res.setTimeout(600000);
+		var retrievedMovie = (typeof req.session.movie === "undefined") ? null : req.session.movie;
+
+		if(retrievedMovie) {
+			var movie = new Movie(retrievedMovie.name, retrievedMovie.boxOfficeNumbers, retrievedMovie.tweetsCount, retrievedMovie.twitterQuery);
+
+			movie.replace(req.query.boxOffice, req.query.twitter, function(err, data) {
+				req.err = err;
+				req.data = data;
+				delete req.session.movie;
+				return next();
+			});
+		} else {
+			req.err = true;
+			req.data = {message:"Retrieve Movie Data First"};
 			return next();
-		});
+		}
 	}
 });
 
@@ -93,24 +118,6 @@ router.get('/replace/:query', function(req, res, next) {
 			data: req.data
 		});
 	}
-});
-
-router.get('/insert/:query', function(req, res, next) {
-	if (req.err) {
-		res.json({
-			err : true,
-			data: req.data
-		});
-	} else {
-		res.json({
-			err : null,
-			data: req.data
-		});
-	}
-
-// res.writeHead(200, { 'Content-Type': 'application/json' });
-// res.write(JSON.stringify({ status: OK }));
-// res.end();
 });
 
 router.get('/delete/:query', function(req, res, next) {

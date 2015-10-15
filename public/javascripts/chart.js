@@ -1,4 +1,4 @@
- function convertToCSV(array) {
+function convertToCSV(array) {
   //var wor;
   var str = 'Box Office\tTweets\tdate\r\n';
   for (var i = 0; i < array.length; i++) {

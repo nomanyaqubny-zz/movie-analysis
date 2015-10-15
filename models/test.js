@@ -2,6 +2,8 @@
 
 var request = require('request'),
     config = require('nconf'),
+    filereader = require('fs'),
+    path = require('path'),
     version = 'api:' + config.get("api:version");
 
 function Test() {}
@@ -64,7 +66,16 @@ Test.prototype = {
     	var defaults = config.get(version);
 
     	callback(null, {VCAP_SERVICES: {all:services, twitterInsight:twitterInsight, dashDB:dashDB}, defaults : defaults})
-	}
+	},
+	getRScript : function(callback) {
+		var filePath = path.join(__dirname, 'rScript.R');
+        var script = filereader.readFileSync(filePath, "utf8");
+        
+        script = script.replace(/REPLACE_TABLE_NAME/g, "TWEETS_FOO_BAR").replace(/REPLACE_MOVIE_ID/g, "9999")
+
+        console.log(script)
+        callback(null, script)
+    }
 }
 
 module.exports = Test;

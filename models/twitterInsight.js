@@ -1,81 +1,77 @@
 "use strict"
 
+/**********************************
+This model js file is responsible for interaction with IBM Insights for Twitter service
+
+Provides method:
+    1. get count of tweets available against a query
+    2. retrieve and insert tweets into database
+        a. create a new table to insert tweets
+        b. asynchronously retrieve, parse, encode and insert tweets
+        c. load R script and calculate tweets decline rate
+
+Author: Noman Yaqub
+***********************************/
+
 var async = require('async'),
-    http = require('http'),
+    filereader = require('fs'),
+    path = require('path'),
     request = require('request'),
     Database = require('./database'),
     config = require('nconf'),
     version = 'api:' + config.get("api:version");
 
-// var pool = new http.Agent;
-//     pool.maxSockets = 100;
-
-var query, 
-    count, 
-    tweets, 
-    MAX_TWEETS, 
+var MAX_TWEETS = 500, 
     insightHOST, 
     schemaTweetMap,
     dashDB,
-    progress;
+    db = new Database();
 
-function TwitterInsight(searchString) {
-    query = searchString;
-    MAX_TWEETS = 500;
-    progress = 0;
-    populateSchemaTweetMap();
-    getColumns();
+populateSchemaTweetMap();
+getColumns();
 
-    var services = JSON.parse(process.env.VCAP_SERVICES || "{}");
+var services = JSON.parse(process.env.VCAP_SERVICES || "{}");
     insightHOST = services["twitterinsights"] ? services["twitterinsights"][0].credentials.url : config.get(version + ':twitterInsights').url;
     dashDB = services["dashDB"] ? services["dashDB"][0].credentials : config.get(version + ':dashDB');
+
+function TwitterInsight(searchString) {
+    this.query = searchString;
+    this.count = 0;
+    this.progress = 0;
 }
 
+// the JavaScript prototype property allows you to add new methods to an existing prototype:
 TwitterInsight.prototype = {
-	count: function(callback) {
+	getCount: function(callback) {
         var url = insightHOST + '/api/v1/messages/count';
-        retrieveInsight(url, query, function(err, data) {
+        var self = this;
+        retrieveInsight(url, this.query, function(err, data) {
             if(!err) {
-                count = data['search']['results'];
-                data.count = count;
+                self.count = data['search']['results'];
+                data.count = self.count;
             }
             callback(err, data);
         });
     },
-    fetch: function(callback) {
-        var url = insightHOST + '/api/v1/messages/search?q=' + query + '&size=' + MAX_TWEETS;
-        console.log(url);
-        async.timesSeries(3, function(n, next) {
-            retrieveInsight(url, function(err, data) {
-                url = data['related']['next']['href'];
-                // count = data['search']['results'];
-                // tweets.push(data['tweets']);
-                //TODO: insert into database here
-                next(err, data);
-            });
-        }, function(err, data) {
-            callback(err, count);
-        });
-	},
     insert: function(movieID, movieName, tableName, callback) {
         //check if there is already an ajax running
-        if(progress == 0) {
+        var self = this;
+        if(self.progress == 0) {
             //create a table with the movie name to store tweets
-            var db = new Database(),
-                url = insightHOST + '/api/v1/messages/search';
+            var url = insightHOST + '/api/v1/messages/search';
             createMovieTweetsTable(db, tableName, function(err, data) {
                 if(!err) {
                     //retrieve the tweets and insert into table
                     //Twitter for Insight provides at max 500 tweets per request
                     //call the retrieve and insert function total number of tweets / max tweets per request
-                    var times =  Math.ceil(count / MAX_TWEETS);
+                    var times =  Math.ceil(self.count / MAX_TWEETS);
                     async.timesLimit(times, 25, function(n, next) {
-                        retrieveInsight(url, query, function(err, data) {
+                        retrieveInsight(url, self.query, function(err, data) {
                             if (!err && data['tweets'].length > 0) {
                                 insertTweets(db, tableName, data['tweets'], function(err, result, rows) {
-                                    if(!err) {
-                                        progress += rows;
-                                        process.stdout.write("\rso far: " + progress);
+                                    if (!err) {
+                                        self.progress += rows;
+                                        process.stdout.write("\rso far: " + self.progress);
                                     }
                                     next(err, result);
                                 });
@@ -90,32 +86,31 @@ TwitterInsight.prototype = {
                         if(!err) {
                             calculateDeclineRate(movieID, tableName, function(err, result) {
                                 data.declineRate = result;
-                                callback(err, {count: progress, data: data});
+                                callback(err, {count: self.progress, data: data});
                             });
                         } else {
-                            callback(err, {count: progress, data: data});
+                            callback(err, {count: self.progress, data: data});
                         }
                     });
                 } else {
-                    callback(err, {count: progress, data: data});
+                    callback(err, {count: self.progress, data: data});
                 }
             });
         }
     },
-    getCount: function() {
-        return count;
-    },
-    getTweets: function() {
-        return tweets;
-    },
     print: function() {
         console.log("No. of Tweets found: " + count);
-        console.log(tweets)
     }
 }
 
 function calculateDeclineRate(movieID, tableName, callback) {
-    var command = "library(ibmdbR)\ncon <- idaConnect(\"BLUDB\",\"\",\"\")\nidaInit(con)\ntweetCountsPerState <- idaQuery(\"SELECT SMAAUTHORSTATE AS STATE, DATE(MSGPOSTEDTIME) AS DATE, COUNT(*) AS CNT FROM "+tableName+" a INNER JOIN US_STATES b ON a.SMAAUTHORSTATE=b.STATE WHERE DATE(MSGPOSTEDTIME)>'2015-01-15' GROUP BY SMAAUTHORSTATE,DATE(MSGPOSTEDTIME) ORDER BY DATE\")\n#Calculate the decline of tweets between opening weekend and now\ntweetCountsPerState$CNT <- as.numeric(tweetCountsPerState$CNT)\ntweetCountsPerState <- na.omit(tweetCountsPerState)\nx <- by(tweetCountsPerState,tweetCountsPerState$STATE,function(df){df[nrow(df),\"CNT\"]/df[1,\"CNT\"]}, simplify=F)\nresult <- data.frame(MOVIE_ID="+movieID+",STATE_ISO=names(x),DECLINE_RATE=as.numeric(as.vector(x)))\n#Write this to a db table\nsqlSave(con, result, tablename = \"TWEET_ALERTS\", append = TRUE, rownames = FALSE)";    
+    // var command = "library(ibmdbR)\ncon <- idaConnect(\"BLUDB\",\"\",\"\")\nidaInit(con)\ntweetCountsPerState <- idaQuery(\"SELECT SMAAUTHORSTATE AS STATE, DATE(MSGPOSTEDTIME) AS DATE, COUNT(*) AS CNT FROM "+tableName+" a INNER JOIN US_STATES b ON a.SMAAUTHORSTATE=b.STATE WHERE DATE(MSGPOSTEDTIME)>'2015-01-15' GROUP BY SMAAUTHORSTATE,DATE(MSGPOSTEDTIME) ORDER BY DATE\")\n#Calculate the decline of tweets between opening weekend and now\ntweetCountsPerState$CNT <- as.numeric(tweetCountsPerState$CNT)\ntweetCountsPerState <- na.omit(tweetCountsPerState)\nx <- by(tweetCountsPerState,tweetCountsPerState$STATE,function(df){df[nrow(df),\"CNT\"]/df[1,\"CNT\"]}, simplify=F)\nresult <- data.frame(MOVIE_ID="+movieID+",STATE_ISO=names(x),DECLINE_RATE=as.numeric(as.vector(x)))\n#Write this to a db table\nsqlSave(con, result, tablename = \"TWEET_ALERTS\", append = TRUE, rownames = FALSE)";    
+    // console.log(command);
+
+    var filePath = path.join(__dirname, 'rScript.R');
+    var command = filereader.readFileSync(filePath, "utf8");
+    
+    command = command.replace(/REPLACE_TABLE_NAME/g, tableName).replace(/REPLACE_MOVIE_ID/g, movieID);
     console.log(command);
 
     request({
@@ -136,14 +131,11 @@ function calculateDeclineRate(movieID, tableName, callback) {
         }
     }, function(err, response, data) {
         console.log("calculateDeclineRate callback")
-        console.log(err)
-        console.log(data)
         callback(err, data);
     });
 }
 
 function getData(data) {
-    console.log(data)
     if(data.length > 1) {
         for (var i = 0; i < data.length; i++) {
             if(data[i] !== null && typeof data[i] === 'object') {
@@ -245,14 +237,13 @@ function createMovieTweetsTable (db, tableName, callback) {
 }
 
 function insertTweets(db, tableName, tweets, callback) {
-    var database = new Database();
     try {
         var insertQuery = "INSERT INTO " + tableName + " (" + getColumns() + ") VALUES ";
         for (var i = 0; i < tweets.length; i++) {
             insertQuery += "("+ getColumnsValues(tweets[i]) + "),";
         }
         insertQuery = insertQuery.slice(0,-1);
-        database.executeQuery(insertQuery, function(err, result) {
+        db.executeQuery(insertQuery, function(err, result) {
             if( !err ) {
                 // console.log("db insert: success")
                 result.message = result.message + " IN TWEETS INSERTION";
@@ -264,7 +255,6 @@ function insertTweets(db, tableName, tweets, callback) {
                 result.message = result.message + " IN TWEETS INSERTION.";
                 callback(err, result, i);
             }
-            database = null;
         });
     } catch(e) {
         console.log('catch')

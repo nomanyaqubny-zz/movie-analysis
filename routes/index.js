@@ -1,3 +1,10 @@
+/********************************************
+Route index.js is responsible for to handle request to homepage of the application
+
+
+Author: Noman Yaqub
+*********************************************/
+
 var	express = require('express'),
 	router = express.Router();
 
