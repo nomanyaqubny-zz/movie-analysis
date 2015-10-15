@@ -1,8 +1,18 @@
+declared-services:
+  dashDB-9d:
+    label: dashDB
+    plan: Entry
+  twitter-loader-twitter-service:
+    label: twitterinsights
+    plan: Free    
 applications:
-- disk_quota: 1024M
+- services:
+  - twitter-loader-twitter-service
+  - dashDB-9d
+  disk_quota: 1024M
   host: movieanalysis
   name: movieanalysis
   path: .
   domain: mybluemix.net
   instances: 1
-  memory: 768M
+  memory: 756M
