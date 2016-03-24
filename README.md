@@ -3,10 +3,10 @@ This project analyzes the actual box office success of the movie (available onli
 
 The entire analysis and creation of this report has been done in IBM Bluemix. The following Bluemix elements have been used:
 
-IBM Insights for Twitter
-IBM dashDB
-RStudio (via dashDB service)
-Node.JS runtime
+1. IBM Insights for Twitter
+2. IBM dashDB
+3. RStudio (via dashDB service)
+4. Node.JS runtime
 
 The working prototype can be found here https://movieanalysis.mybluemix.net/
 
